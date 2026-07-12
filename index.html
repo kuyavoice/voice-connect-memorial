@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ボイスコネクトメモリアル 公式ポータルサイト</title>
+  <meta name="description" content="声が魔法になる世界で――。絶望と再生の現代ダークファンタジー『ボイスコネクトメモリアル』公式プロジェクトサイト。">
+  <meta property="og:title" content="ボイスコネクトメモリアル 公式ポータルサイト">
+  <meta property="og:description" content="声が魔法になる世界で――。絶望と再生の現代ダークファンタジー『ボイスコネクトメモリアル』公式プロジェクトサイト。">
+  <meta property="og:image" content="ogp_dummy.png">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><polygon points="0,0 64,0 50,64 0,64" fill="%2387CEEB"/><text x="28" y="45" font-family="Arial,sans-serif" font-weight="bold" font-size="30" text-anchor="middle" fill="%23060913">VC</text></svg>'>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            night:    '#060913',   // ほぼ黒の紺
+            midnight: '#0B1026',   // ミッドナイトブルー
+            deepblue: '#111A3A',
+            accent:   '#87CEEB',   // スカイブルー
+          },
+          fontFamily: {
+            en: ['Oswald', 'sans-serif'],
+            jp: ['"Noto Sans JP"', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* ============ base ============ */
+    html { scroll-behavior: smooth; }
+    body { background: #060913; }
+
+    /* ============ starfield ============ */
+    .star {
+      position: absolute;
+      border-radius: 9999px;
+      background: #fff;
+      animation: twinkle var(--tw-dur, 3s) ease-in-out infinite;
+      animation-delay: var(--tw-delay, 0s);
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: .15; }
+      50%      { opacity: .9; }
+    }
+
+    /* ============ loading screen ============ */
+    #loading {
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      transition: clip-path .6s cubic-bezier(.77, 0, .18, 1), opacity .5s ease .1s;
+    }
+    #loading.done {
+      clip-path: polygon(-30% 0, 0 0, -30% 100%, -60% 100%);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .loading-bar {
+      animation: loadbar 1s cubic-bezier(.77, 0, .18, 1) forwards;
+      transform-origin: left;
+      transform: scaleX(0);
+    }
+    @keyframes loadbar { to { transform: scaleX(1); } }
+
+    /* ============ hero copy: glitch / diagonal-mask reveal ============ */
+    .hero-reveal { opacity: 0; }
+    .hero-reveal.revealed {
+      animation: slashReveal .45s steps(1, end) forwards;
+    }
+    @keyframes slashReveal {
+      0%   { opacity: 1; clip-path: polygon(0 0, 12% 0, 0 100%, 0 100%); transform: translateX(-6px) skewX(-8deg); }
+      25%  { clip-path: polygon(0 0, 45% 0, 25% 100%, 0 100%); transform: translateX(4px)  skewX(4deg); }
+      50%  { clip-path: polygon(0 0, 78% 0, 55% 100%, 0 100%); transform: translateX(-3px) skewX(-3deg); }
+      75%  { clip-path: polygon(0 0, 100% 0, 88% 100%, 0 100%); transform: translateX(2px); }
+      100% { opacity: 1; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); transform: none; }
+    }
+
+    /* ============ character slash transition ============ */
+    #char-stage.slash-out {
+      animation: slashOut .3s cubic-bezier(.77, 0, .18, 1) forwards;
+    }
+    #char-stage.slash-in {
+      animation: slashIn .3s cubic-bezier(.22, 1, .36, 1) forwards;
+    }
+    @keyframes slashOut {
+      from { opacity: 1; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+      to   { opacity: 0; clip-path: polygon(100% 0, 100% 0, 0 100%, 0 100%); }
+    }
+    @keyframes slashIn {
+      from { opacity: 0; clip-path: polygon(0 0, 0 0, 100% 100%, 100% 100%); }
+      to   { opacity: 1; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+    }
+
+    /* ============ character theming (--char-color is set from JS) ============ */
+    .char-band {
+      background: var(--char-color, #87CEEB);
+    }
+    .char-dialogue {
+      border-color: var(--char-color, #87CEEB);
+      box-shadow: 0 0 18px -6px var(--char-color, #87CEEB);
+    }
+    .voice-btn {
+      border: 1px solid var(--char-color, #87CEEB);
+      color: var(--char-color, #87CEEB);
+      transition: box-shadow .2s ease, background-color .2s ease, color .2s ease;
+    }
+    .voice-btn:hover {
+      background-color: var(--char-color, #87CEEB);
+      color: #060913;
+      box-shadow: 0 0 22px 0 var(--char-color, #87CEEB);
+    }
+    .expr-btn.active {
+      background-color: var(--char-color, #87CEEB);
+      color: #060913;
+    }
+
+    /* ============ mobile fullscreen nav ============ */
+    #mobile-nav {
+      clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%);
+      transition: clip-path .45s cubic-bezier(.77, 0, .18, 1);
+      pointer-events: none;
+    }
+    #mobile-nav.open {
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      pointer-events: auto;
+    }
+    #mobile-nav.open .mnav-item {
+      opacity: 1;
+      transform: translateX(0) skewX(0);
+    }
+    .mnav-item {
+      opacity: 0;
+      transform: translateX(40px) skewX(-6deg);
+      transition: opacity .3s ease, transform .35s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    /* ============ character portrait: 実画像ロード時のみの演出 (C-1〜C-3) ============ */
+    /* has-image は #char-image の load 成功時にJSが付与。ダミー枠のキャラには付かない */
+    .portrait-root { transition: max-width .3s ease, width .3s ease; }
+    .portrait-root.has-image { width: 74%; max-width: 360px; }
+    @media (min-width: 768px) {
+      .portrait-root.has-image { max-width: 440px; }
+    }
+    .portrait-root.has-image .char-frame {
+      border-color: transparent;      /* C-1: 破線枠を消す */
+      background: none;
+      overflow: visible;              /* C-3: はみ出しを許可 */
+    }
+    .portrait-root.has-image .char-placeholder { display: none; }
+    .portrait-root.has-image #char-image {
+      top: -9%;                       /* C-3: 頭部が背景ナンバー・斜め帯に少し重なる */
+      height: 112%;
+      mask-image: linear-gradient(to bottom, black 78%, transparent 100%);          /* C-2: 下端フェード */
+      -webkit-mask-image: linear-gradient(to bottom, black 78%, transparent 100%);
+    }
+
+    /* ============ music carousel ============ */
+    .carousel-track {
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .carousel-track::-webkit-scrollbar { display: none; }
+    .music-card { scroll-snap-align: start; }
+    .music-card .jacket-img {
+      transition: transform .4s cubic-bezier(.22, 1, .36, 1);
+    }
+    .music-card:hover .jacket-img { transform: scale(1.06); }
+
+    /* ============ gallery hover: 拡大＋斜め傾き ============ */
+    .gallery-item {
+      transition: transform .35s cubic-bezier(.22, 1, .36, 1),
+                  box-shadow .35s ease,
+                  border-color .35s ease;
+      will-change: transform;
+    }
+    .gallery-item:hover {
+      transform: scale(1.05) rotate(-2deg) skewX(-1deg);
+      border-color: #87CEEB;
+      box-shadow: 0 0 28px -4px rgba(135, 206, 235, .45);
+      z-index: 10;
+    }
+    .gallery-img {
+      transition: transform .45s cubic-bezier(.22, 1, .36, 1);
+    }
+    .gallery-item:hover .gallery-img {
+      transform: scale(1.12) rotate(2deg); /* 枠の傾きと逆方向で奥行き感を出す */
+    }
+    .gallery-tag {
+      transform: translateY(100%);
+      transition: transform .3s cubic-bezier(.22, 1, .36, 1);
+    }
+    .gallery-item:hover .gallery-tag {
+      transform: translateY(0);
+    }
+
+    /* ============ scroll reveal ============ */
+    .sr {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .6s ease, transform .6s cubic-bezier(.22, 1, .36, 1);
+      transition-delay: var(--sr-delay, 0s);
+    }
+    .sr.visible { opacity: 1; transform: none; }
+
+    /* ============ hero shooting stars ============ */
+    .shooting {
+      position: absolute;
+      width: 130px;
+      height: 1px;
+      background: linear-gradient(90deg, #fff, transparent);
+      opacity: 0;
+      animation: shoot 7s linear infinite;
+      pointer-events: none;
+    }
+    .shooting.s2 { animation-delay: 3.6s; width: 90px; }
+    @keyframes shoot {
+      0%, 88% { opacity: 0; transform: rotate(-30deg) translateX(0); }
+      90%     { opacity: .9; }
+      100%    { opacity: 0; transform: rotate(-30deg) translateX(-280px); }
+    }
+
+    /* ============ character quick jump ============ */
+    .char-jump.active {
+      background: #87CEEB;
+      color: #060913;
+      border-color: #87CEEB;
+    }
+
+    /* ============ hero: 声の波形イコライザー ============ */
+    .eq span {
+      display: block;
+      width: 3px;
+      height: 100%;
+      background: linear-gradient(to top, #87CEEB, rgba(135, 206, 235, .15));
+      transform-origin: bottom;
+      animation: eq 1s ease-in-out infinite alternate;
+    }
+    @keyframes eq {
+      from { transform: scaleY(.15); }
+      to   { transform: scaleY(1); }
+    }
+
+    /* ============ gallery lightbox ============ */
+    #lightbox { transition: opacity .25s ease; }
+    #lightbox.hidden { opacity: 0; pointer-events: none; display: flex; visibility: hidden; }
+    #lightbox img { box-shadow: 0 0 60px -10px rgba(135, 206, 235, .35); }
+
+    /* ============ reduced motion ============ */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .star, .shooting, .loading-bar { animation: none !important; }
+      .eq, #constellation { display: none !important; }
+      .sr, .hero-reveal {
+        animation: none !important;
+        transition: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+        clip-path: none !important;
+      }
+    }
+
+    /* ============ misc diagonal helpers ============ */
+    .clip-slant-b { clip-path: polygon(0 0, 100% 0, 100% calc(100% - 3rem), 0 100%); }
+    .clip-slant-t { clip-path: polygon(0 3rem, 100% 0, 100% 100%, 0 100%); }
+    .clip-tag     { clip-path: polygon(0 0, 100% 0, calc(100% - .9rem) 100%, 0 100%); }
+  </style>
+</head>
+
+<body class="font-jp text-white antialiased overflow-x-hidden">
+
+  <!-- ================================================================
+       LOADING SCREEN
+  ================================================================= -->
+  <div id="loading" class="fixed inset-0 z-[100] bg-night flex flex-col items-center justify-center overflow-hidden">
+    <div class="starfield absolute inset-0"></div>
+    <span class="clip-tag relative bg-accent text-night font-en font-bold text-sm px-3 py-1 tracking-widest mb-4">VCM</span>
+    <p class="font-en text-2xl md:text-4xl font-semibold tracking-[.35em] text-white relative">
+      VOICE<span class="text-accent">CONNECT</span>MEMORIAL
+    </p>
+    <div class="w-40 h-[2px] bg-white/20 mt-6 relative overflow-hidden">
+      <div class="loading-bar absolute inset-0 bg-accent"></div>
+    </div>
+  </div>
+
+  <!-- ================================================================
+       HEADER NAV
+  ================================================================= -->
+  <header class="fixed top-0 inset-x-0 z-50 bg-night/80 backdrop-blur-md border-b border-white/10">
+    <div class="max-w-6xl mx-auto flex items-center justify-between h-14 md:h-16 px-4">
+      <a href="#hero" class="flex items-center gap-2 group">
+        <span class="clip-tag bg-accent text-night font-en font-bold text-xs px-2 py-1 tracking-wider">VCM</span>
+        <span class="font-en font-semibold tracking-[.2em] text-sm md:text-base group-hover:text-accent transition-colors">
+          VOICE CONNECT MEMORIAL
+        </span>
+      </a>
+
+      <!-- PC nav -->
+      <nav class="hidden md:flex items-center gap-6 font-en font-medium tracking-widest text-sm">
+        <a href="#story"     class="hover:text-accent transition-colors">STORY</a>
+        <a href="#character" class="hover:text-accent transition-colors">CHARACTER</a>
+        <a href="#music"     class="hover:text-accent transition-colors">MUSIC</a>
+        <a href="#novel"     class="hover:text-accent transition-colors">NOVEL</a>
+        <a href="#script"    class="hover:text-accent transition-colors">SCRIPT</a>
+        <a href="https://x.com/ku_yavoice" target="_blank" rel="noopener"
+           class="clip-tag bg-white text-night px-3 py-1 font-bold hover:bg-accent transition-colors">X</a>
+      </nav>
+
+      <!-- hamburger (mobile) -->
+      <button id="menu-btn" aria-label="メニューを開く" class="md:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-[6px]">
+        <span class="menu-line block w-6 h-[2px] bg-white transition-transform duration-300"></span>
+        <span class="menu-line block w-6 h-[2px] bg-accent transition-opacity duration-300"></span>
+        <span class="menu-line block w-6 h-[2px] bg-white transition-transform duration-300"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- mobile fullscreen nav -->
+  <div id="mobile-nav" class="fixed inset-0 z-40 bg-night md:hidden">
+    <!-- diagonal decoration -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute -left-24 top-0 w-1/2 h-[140%] bg-midnight -rotate-12 origin-top"></div>
+      <div class="absolute right-[-10%] bottom-[-20%] w-1/3 h-[80%] bg-accent/10 rotate-12"></div>
+    </div>
+    <nav class="relative h-full flex flex-col justify-center gap-2 px-10 pt-14">
+      <a href="#story"     class="mnav-item font-en text-4xl font-semibold tracking-widest py-2 hover:text-accent" style="transition-delay:.05s">STORY</a>
+      <a href="#character" class="mnav-item font-en text-4xl font-semibold tracking-widest py-2 hover:text-accent" style="transition-delay:.1s">CHARACTER</a>
+      <a href="#music"     class="mnav-item font-en text-4xl font-semibold tracking-widest py-2 hover:text-accent" style="transition-delay:.15s">MUSIC</a>
+      <a href="#novel"     class="mnav-item font-en text-4xl font-semibold tracking-widest py-2 hover:text-accent" style="transition-delay:.2s">NOVEL</a>
+      <a href="#script"    class="mnav-item font-en text-4xl font-semibold tracking-widest py-2 hover:text-accent" style="transition-delay:.25s">SCRIPT</a>
+      <a href="https://x.com/ku_yavoice" target="_blank" rel="noopener"
+         class="mnav-item font-en text-4xl font-semibold tracking-widest py-2 hover:text-accent" style="transition-delay:.3s">X ↗</a>
+    </nav>
+  </div>
+
+  <main>
+    <!-- ================================================================
+         HERO
+    ================================================================= -->
+    <section id="hero" class="relative h-[100svh] min-h-[560px] flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-night via-midnight to-night">
+      <div class="starfield absolute inset-0"></div>
+      <canvas id="constellation" class="absolute inset-0 w-full h-full pointer-events-none" aria-hidden="true"></canvas>
+      <span class="shooting" style="top:16%; left:72%" aria-hidden="true"></span>
+      <span class="shooting s2" style="top:32%; left:28%" aria-hidden="true"></span>
+
+      <!-- diagonal accent bands -->
+      <div class="absolute inset-0 pointer-events-none">
+        <div class="absolute -right-20 top-[12%] w-[70%] h-10 bg-accent/10 -rotate-12"></div>
+        <div class="absolute -left-24 bottom-[18%] w-[60%] h-6 bg-accent/15 -rotate-12"></div>
+      </div>
+
+      <!-- logo image frame (dummy src) -->
+      <div class="relative w-[82%] max-w-xl aspect-[16/7] flex items-center justify-center">
+        <img src="logo_dummy.png" alt="ボイスコネクトメモリアル ロゴ" class="absolute inset-0 w-full h-full object-contain"
+             onerror="this.style.display='none'">
+        <!-- タイポグラフィ版ロゴ（logo_dummy.png が配置されたら画像が上に被さる） -->
+        <div class="absolute inset-0 flex flex-col items-center justify-center select-none">
+          <div class="absolute w-[115%] h-8 md:h-10 bg-accent/10 -rotate-6" aria-hidden="true"></div>
+          <p class="relative font-en font-bold italic text-4xl md:text-6xl leading-none tracking-tight">
+            VOICE&nbsp;<span class="text-accent">CONNECT</span>
+          </p>
+          <p class="relative font-en font-semibold text-2xl md:text-4xl tracking-[.5em] md:tracking-[.55em] leading-none mt-2 -mr-[.5em]">MEMORIAL</p>
+          <span class="relative block w-24 md:w-32 h-[3px] bg-accent mt-4 -skew-x-12"></span>
+          <p class="relative font-jp font-light text-[10px] md:text-xs tracking-[.45em] text-white/60 mt-3 -mr-[.45em]">ボイスコネクトメモリアル</p>
+        </div>
+      </div>
+
+      <!-- catchphrase -->
+      <p class="hero-reveal relative mt-10 md:mt-12 font-jp font-black text-xl md:text-3xl tracking-wider text-center px-6 leading-relaxed"
+         data-reveal>
+        その声は、<span class="text-accent">絶望を打ち砕く魔法</span>になる
+      </p>
+
+      <!-- 声の波形（イコライザー） -->
+      <div class="eq relative mt-7 flex items-end gap-[3px] h-6" aria-hidden="true">
+        <span style="animation-delay:-.9s;animation-duration:1.3s"></span>
+        <span style="animation-delay:-.4s;animation-duration:.9s"></span>
+        <span style="animation-delay:-1.2s;animation-duration:1.1s"></span>
+        <span style="animation-delay:-.2s;animation-duration:.8s"></span>
+        <span style="animation-delay:-.7s;animation-duration:1.4s"></span>
+        <span style="animation-delay:-1s;animation-duration:.85s"></span>
+        <span style="animation-delay:-.5s;animation-duration:1.2s"></span>
+        <span style="animation-delay:-1.4s;animation-duration:.95s"></span>
+        <span style="animation-delay:-.3s;animation-duration:1.05s"></span>
+        <span style="animation-delay:-.8s;animation-duration:.9s"></span>
+        <span style="animation-delay:-.1s;animation-duration:1.25s"></span>
+      </div>
+
+      <!-- scroll indicator -->
+      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/50">
+        <span class="font-en text-[10px] tracking-[.4em]">SCROLL</span>
+        <span class="block w-[1px] h-10 bg-gradient-to-b from-accent to-transparent"></span>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         STORY (Coming Soon)
+    ================================================================= -->
+    <section id="story" class="relative py-24 px-4 bg-midnight clip-slant-b overflow-hidden">
+      <!-- 背景ビジュアル（still_02を薄く敷く） -->
+      <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <img src="still_02.png" alt="" class="w-full h-full object-cover opacity-25">
+        <div class="absolute inset-0 bg-gradient-to-b from-midnight via-midnight/60 to-midnight"></div>
+      </div>
+
+      <div class="relative max-w-4xl mx-auto">
+        <h2 class="font-en text-4xl md:text-5xl font-semibold tracking-widest mb-10">
+          <span class="text-accent">/</span> STORY
+        </h2>
+
+        <p class="font-jp font-black text-xl md:text-3xl leading-relaxed tracking-wider mb-3">
+          「声」が魔法になる世界で――<br>
+          <span class="text-accent">君と、砕けた星を繋ぐ。</span>
+        </p>
+        <p class="font-jp font-light text-xs md:text-sm text-white/60 tracking-widest mb-10">
+          その声は魔法になる。声なき侵略者に抗う少年少女たちの、絶望と再生の記録。
+        </p>
+
+        <div class="border-l-4 border-accent bg-night/70 backdrop-blur-sm p-5 md:p-8 mb-10">
+          <p class="font-jp font-light text-sm md:text-base leading-loose text-white/90">
+            人の心を蝕む“声なき侵略者”に、世界は静かに呑み込まれつつあった。<br>
+            それに抗う唯一の力は、人の「声」に宿る魔法。<br><br>
+            音の記憶だけを頼りに生きてきた少女は、ある月夜の出会いをきっかけに「月怜瑞穂」の名と声の力を授かり、声の魔法に目覚めた者たちが集う学園の門をくぐる。<br><br>
+            個性豊かな仲間たちとの出会いが、止まっていた彼女の物語を動かし始める――。<br>
+            これは、絶望と再生の現代ダークファンタジー。
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-4">
+          <a href="https://kakuyomu.jp/works/2912051602671195569" target="_blank" rel="noopener"
+             class="clip-tag inline-flex items-center gap-3 font-en tracking-widest text-sm px-6 py-3 bg-accent text-night font-semibold hover:bg-white transition-colors">
+            READ ON KAKUYOMU →
+          </a>
+          <p class="font-jp font-light text-xs text-white/50">カクヨムにて連載中・毎日更新</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         CHARACTER
+    ================================================================= -->
+    <section id="character" class="relative py-24 md:py-28 px-4 bg-night overflow-hidden">
+      <div class="max-w-5xl mx-auto">
+        <h2 class="font-en text-4xl md:text-5xl font-semibold tracking-widest mb-10">
+          <span class="text-accent">/</span> CHARACTER
+        </h2>
+
+        <!-- stage -->
+        <div id="char-viewport" class="relative min-h-[80svh] md:min-h-0">
+          <div id="char-stage" class="relative">
+
+            <!-- diagonal theme band (color_theme) -->
+            <div class="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+              <div class="char-band absolute -left-16 top-8 w-[130%] h-20 md:h-28 opacity-15 -rotate-6"></div>
+              <div class="char-band absolute -right-20 bottom-6 w-[120%] h-10 opacity-10 -rotate-6"></div>
+            </div>
+
+            <div class="relative grid md:grid-cols-2 gap-8 md:gap-10 items-center">
+
+              <!-- portrait (9:16〜3:4 縦長プレースホルダー) -->
+              <div class="portrait-root relative mx-auto w-[62%] max-w-[280px] md:max-w-[340px]">
+                <span id="char-num-bg" class="absolute -top-8 -left-8 font-en font-bold text-[6rem] md:text-[8rem] leading-none text-white/10 select-none">01</span>
+                <div class="char-frame relative aspect-[3/4] border border-dashed border-white/30 bg-gradient-to-b from-deepblue/60 to-night overflow-hidden">
+                  <div class="char-placeholder absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none">
+                    <span class="font-en text-[10px] tracking-[.35em] text-white/40">CHARACTER IMAGE</span>
+                    <span id="char-image-label" class="font-en text-xs text-white/30">dummy_kuya_normal.png</span>
+                  </div>
+                  <img id="char-image" src="kuya_normal.png" alt="" class="absolute inset-0 w-full h-full object-cover object-top" onerror="this.style.opacity=0">
+                </div>
+              </div>
+
+              <!-- info -->
+              <div class="relative">
+                <p id="char-catch" class="font-jp font-bold text-accent tracking-widest text-sm md:text-base mb-2">もう一度、星を繋ぐために。</p>
+                <h3 id="char-name" class="font-jp font-black text-3xl md:text-4xl tracking-wide mb-1">宵月 空夜</h3>
+                <p class="font-en text-white/60 text-sm tracking-widest mb-6">CV. <span id="char-cv" class="font-jp">言峰 空也</span></p>
+
+                <!-- expression toggle -->
+                <div class="flex font-en text-sm tracking-widest mb-5 border border-white/25 w-fit">
+                  <button id="expr-normal" class="expr-btn active px-4 py-2 transition-colors">▼ NORMAL</button>
+                  <button id="expr-serious" class="expr-btn px-4 py-2 transition-colors">▶ SERIOUS</button>
+                </div>
+
+                <!-- dialogue window (border = color_theme) -->
+                <div class="char-dialogue relative border-l-4 bg-midnight/70 p-4 md:p-5 mb-6 min-h-[7rem]">
+                  <p id="char-text" class="font-jp font-light text-sm md:text-base leading-relaxed">
+                    俺は宵月空夜。戦う時は、近接も魔法もいけるけど……二人みたいに、ずば抜けた才能があるわけじゃないんだ
+                  </p>
+                </div>
+
+                <!-- voice button -->
+                <button id="voice-btn" class="voice-btn font-en tracking-widest text-sm px-6 py-3 flex items-center gap-3 clip-tag">
+                  <span class="text-lg leading-none">▶</span>
+                  <span id="voice-btn-label">VOICE 1</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- pager: arrows + "01 / 02" indicator -->
+          <div class="relative flex items-center justify-center gap-8 mt-10">
+            <button id="char-prev" aria-label="前のキャラクター"
+                    class="w-12 h-12 border border-white/30 font-en text-xl hover:bg-accent hover:text-night hover:border-accent transition-colors">&#x2039;</button>
+            <p class="font-en text-lg tracking-[.3em]">
+              <span id="char-current" class="text-accent font-semibold">01</span>
+              <span class="text-white/40"> / </span>
+              <span id="char-total" class="text-white/60">02</span>
+            </p>
+            <button id="char-next" aria-label="次のキャラクター"
+                    class="w-12 h-12 border border-white/30 font-en text-xl hover:bg-accent hover:text-night hover:border-accent transition-colors">&#x203A;</button>
+          </div>
+
+          <!-- クイックジャンプ（番号で直接移動） -->
+          <div id="char-index" class="relative flex flex-wrap justify-center gap-1.5 mt-6 max-w-md mx-auto"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         MUSIC / NOVEL / SCRIPT (Coming Soon)
+    ================================================================= -->
+    <section id="music" class="relative py-24 px-4 bg-midnight clip-slant-t">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="font-en text-4xl md:text-5xl font-semibold tracking-widest mb-8">
+          <span class="text-accent">/</span> MUSIC
+        </h2>
+        <p class="font-en text-xs tracking-[.3em] text-white/40 -mt-4 mb-8">CHARACTER SONGS — SWIPE OR DRAG</p>
+        <!-- 楽曲カルーセル（JSのmusics配列から描画） -->
+        <div id="music-track" class="carousel-track flex gap-4 md:gap-6 overflow-x-auto pb-4 -mx-4 px-4"></div>
+        <div class="flex items-center justify-center gap-8 mt-6">
+          <button id="music-prev" aria-label="前の曲へ"
+                  class="w-12 h-12 border border-white/30 font-en text-xl hover:bg-accent hover:text-night hover:border-accent transition-colors">&#x2039;</button>
+          <p class="font-en text-lg tracking-[.3em]">
+            <span id="music-cur" class="text-accent font-semibold">01</span>
+            <span class="text-white/40"> / </span>
+            <span id="music-total" class="text-white/60">03</span>
+          </p>
+          <button id="music-next" aria-label="次の曲へ"
+                  class="w-12 h-12 border border-white/30 font-en text-xl hover:bg-accent hover:text-night hover:border-accent transition-colors">&#x203A;</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="novel" class="relative py-24 px-4 bg-night">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="font-en text-4xl md:text-5xl font-semibold tracking-widest mb-8">
+          <span class="text-accent">/</span> NOVEL
+        </h2>
+        <!-- 連載ノベル一覧（JSのnovels配列から描画） -->
+        <div id="novel-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
+      </div>
+    </section>
+
+    <section id="script" class="relative py-24 px-4 bg-midnight clip-slant-t">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="font-en text-4xl md:text-5xl font-semibold tracking-widest mb-8">
+          <span class="text-accent">/</span> SCRIPT
+        </h2>
+        <!-- 台本アーカイブ（JSのscripts配列から描画） -->
+        <div id="script-list" class="flex flex-col gap-4"></div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         GALLERY (イベントスチル 16:9)
+    ================================================================= -->
+    <section id="gallery" class="relative py-24 px-4 bg-night overflow-hidden">
+      <div class="max-w-5xl mx-auto">
+        <h2 class="font-en text-4xl md:text-5xl font-semibold tracking-widest mb-10">
+          <span class="text-accent">/</span> GALLERY
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
+          <figure class="gallery-item group relative aspect-video border border-white/20 bg-gradient-to-br from-deepblue/70 to-night overflow-hidden cursor-pointer">
+            <figcaption class="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none">
+              <span class="font-en text-[10px] tracking-[.35em] text-white/40">EVENT STILL</span>
+              <span class="font-en text-xs text-white/30">still_01.png</span>
+            </figcaption>
+            <img src="still_01.png" alt="イベントスチル 01" class="absolute inset-0 w-full h-full object-cover gallery-img" loading="lazy" decoding="async" onerror="this.style.opacity=0">
+            <span class="gallery-tag clip-tag absolute bottom-0 left-0 bg-accent text-night font-en font-bold text-xs px-3 py-1 tracking-widest">STILL 01</span>
+          </figure>
+
+          <figure class="gallery-item group relative aspect-video border border-white/20 bg-gradient-to-br from-deepblue/70 to-night overflow-hidden cursor-pointer">
+            <figcaption class="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none">
+              <span class="font-en text-[10px] tracking-[.35em] text-white/40">EVENT STILL</span>
+              <span class="font-en text-xs text-white/30">still_02.png</span>
+            </figcaption>
+            <img src="still_02.png" alt="イベントスチル 02" class="absolute inset-0 w-full h-full object-cover gallery-img" loading="lazy" decoding="async" onerror="this.style.opacity=0">
+            <span class="gallery-tag clip-tag absolute bottom-0 left-0 bg-accent text-night font-en font-bold text-xs px-3 py-1 tracking-widest">STILL 02</span>
+          </figure>
+
+          <figure class="gallery-item group relative aspect-video border border-white/20 bg-gradient-to-br from-deepblue/70 to-night overflow-hidden cursor-pointer">
+            <figcaption class="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none">
+              <span class="font-en text-[10px] tracking-[.35em] text-white/40">EVENT STILL</span>
+              <span class="font-en text-xs text-white/30">dummy_still_03.png</span>
+            </figcaption>
+            <img src="dummy_still_03.png" alt="イベントスチル 03" class="absolute inset-0 w-full h-full object-cover gallery-img" loading="lazy" decoding="async" onerror="this.style.opacity=0">
+            <span class="gallery-tag clip-tag absolute bottom-0 left-0 bg-accent text-night font-en font-bold text-xs px-3 py-1 tracking-widest">STILL 03</span>
+          </figure>
+
+          <figure class="gallery-item group relative aspect-video border border-white/20 bg-gradient-to-br from-deepblue/70 to-night overflow-hidden cursor-pointer">
+            <figcaption class="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none">
+              <span class="font-en text-[10px] tracking-[.35em] text-white/40">EVENT STILL</span>
+              <span class="font-en text-xs text-white/30">dummy_still_04.png</span>
+            </figcaption>
+            <img src="dummy_still_04.png" alt="イベントスチル 04" class="absolute inset-0 w-full h-full object-cover gallery-img" loading="lazy" decoding="async" onerror="this.style.opacity=0">
+            <span class="gallery-tag clip-tag absolute bottom-0 left-0 bg-accent text-night font-en font-bold text-xs px-3 py-1 tracking-widest">STILL 04</span>
+          </figure>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================================================================
+       FOOTER
+  ================================================================= -->
+  <footer class="relative bg-night border-t border-white/10 pt-14 pb-8 px-4 clip-slant-t">
+    <div class="max-w-6xl mx-auto flex flex-col items-center gap-6">
+      <p class="font-en font-semibold tracking-[.3em] text-lg text-center">
+        VOICE<span class="text-accent">CONNECT</span>MEMORIAL
+      </p>
+      <nav class="flex flex-wrap justify-center gap-x-6 gap-y-2 font-en text-xs tracking-widest text-white/60">
+        <a href="#story"     class="hover:text-accent transition-colors">STORY</a>
+        <a href="#character" class="hover:text-accent transition-colors">CHARACTER</a>
+        <a href="#music"     class="hover:text-accent transition-colors">MUSIC</a>
+        <a href="#novel"     class="hover:text-accent transition-colors">NOVEL</a>
+        <a href="#script"    class="hover:text-accent transition-colors">SCRIPT</a>
+        <a href="https://x.com/ku_yavoice" target="_blank" rel="noopener" class="hover:text-accent transition-colors">X ↗</a>
+      </nav>
+      <p class="font-jp font-light text-[10px] text-white/30 text-center leading-relaxed px-4">
+        本プロジェクトの物語・演技・編集は制作者と協力キャストの手によるものです。画像・楽曲等の一部制作にAI技術を活用しています。
+      </p>
+      <p class="font-en text-[10px] tracking-widest text-white/30">
+        &copy; 2025-2026 言峰空也 / VOICE CONNECT MEMORIAL PROJECT
+      </p>
+    </div>
+  </footer>
+
+  <!-- ================================================================
+       GALLERY LIGHTBOX
+  ================================================================= -->
+  <div id="lightbox" class="hidden fixed inset-0 z-[95] bg-night/95 flex items-center justify-center p-4 md:p-12">
+    <img id="lightbox-img" src="" alt="" class="max-w-full max-h-[82svh] object-contain">
+    <p id="lightbox-caption" class="absolute bottom-16 left-1/2 -translate-x-1/2 font-en text-xs tracking-[.3em] text-white/60"></p>
+    <button id="lightbox-close" aria-label="閉じる"
+            class="absolute top-4 right-4 w-11 h-11 border border-white/30 font-en text-xl hover:bg-accent hover:text-night hover:border-accent transition-colors">✕</button>
+    <button id="lightbox-prev" aria-label="前のスチル"
+            class="absolute left-3 md:left-6 top-1/2 -translate-y-1/2 w-11 h-11 border border-white/30 font-en text-xl hover:bg-accent hover:text-night hover:border-accent transition-colors">&#x2039;</button>
+    <button id="lightbox-next" aria-label="次のスチル"
+            class="absolute right-3 md:right-6 top-1/2 -translate-y-1/2 w-11 h-11 border border-white/30 font-en text-xl hover:bg-accent hover:text-night hover:border-accent transition-colors">&#x203A;</button>
+  </div>
+
+  <!-- back to top -->
+  <button id="to-top" aria-label="ページ上部へ戻る"
+          class="fixed bottom-6 right-6 z-40 w-11 h-11 border border-white/30 bg-night/80 backdrop-blur font-en text-accent opacity-0 pointer-events-none transition-all duration-300 hover:bg-accent hover:text-night hover:border-accent">▲</button>
+
+  <!-- ================================================================
+       SCRIPT
+  ================================================================= -->
+  <script>
+    /* ---------- character data (後から配列に追加するだけで拡張可能) ---------- */
+    const characterData = [
+      {
+        id: "01",
+        name: "宵月 空夜",
+        cv: "言峰 空也",
+        catchphrase: "もう一度、星を繋ぐために。",
+        color_theme: "#00BFFF",
+        normal: {
+          image: "kuya_normal.png",
+          text: "俺は宵月空夜。戦う時は、近接も魔法もいけるけど……二人みたいに、ずば抜けた才能があるわけじゃないんだ。",
+          voice1_url: "dummy_v1.mp3"
+        },
+        serious: {
+          image: "dummy_kuya_serious.png",
+          text: "……俺のせいだ。俺の指揮が、みんなを……ッ！",
+          voice2_url: "dummy_v2.mp3"
+        }
+      },
+      {
+        id: "02",
+        name: "狐森 雪人",
+        cv: "雪狐",
+        catchphrase: "暗闇の中でも、いつか見た星を追って。",
+        color_theme: "#C0C0C0",
+        normal: {
+          image: "dummy_yukihito_normal.png",
+          text: "初めまして、狐森雪人です。僕は主に前衛で剣を振るっています。何かあれば、頼ってください。",
+          voice1_url: "dummy_v1.mp3"
+        },
+        serious: {
+          image: "dummy_yukihito_serious.png",
+          text: "僕は……貴方の剣だ。理不尽な運命すら斬り伏せる、絶対的な力が手に入るまで！",
+          voice2_url: "dummy_v2.mp3"
+        }
+      },
+      {
+        id: "03",
+        name: "月怜 瑞穂",
+        cv: "瑞浪 蓮",
+        catchphrase: "水面に映る、その瞳に希望を宿して。",
+        color_theme: "#87CEFA",
+        normal: {
+          image: "dummy_mizuho_normal.png",
+          text: "月怜瑞穂です。私、何も知らないまま学園に来ちゃったから……色々教えてもらえると嬉しいです。",
+          voice1_url: "dummy_v1.mp3"
+        },
+        serious: {
+          image: "dummy_mizuho_serious.png",
+          text: "私が今の私でいられるのは、私だけの力じゃないから。……だから、私で役に立てることがあるなら、何でもやりたいんです！",
+          voice2_url: "dummy_v2.mp3"
+        }
+      },
+      {
+        id: "04",
+        name: "黒崎 詩音",
+        cv: "？？？",
+        catchphrase: "物語の結末は、私が決める。",
+        color_theme: "#4B0082",
+        normal: {
+          image: "dummy_shion_normal.png",
+          text: "私は黒崎詩音よ。ライターとして、後方からみんなを魔法でサポートしてるわ。よろしくね、瑞穂ちゃん。",
+          voice1_url: "dummy_v1.mp3"
+        },
+        serious: {
+          image: "dummy_shion_serious.png",
+          text: "ごめんね。……大好きだよ。あなたたちが、私の光だったから。",
+          voice2_url: "dummy_v2.mp3"
+        }
+      },
+      {
+        id: "05",
+        name: "寿 律花",
+        cv: "雛桜 律",
+        catchphrase: "愛と妄想で世界を救う、声の魔女。",
+        color_theme: "#FF69B4",
+        normal: {
+          image: "dummy_ritsuka_normal.png",
+          text: "寿律花です！ あのね、私……すっごいオタクなの。漫画やアニメが好きでね！",
+          voice1_url: "dummy_v1.mp3"
+        },
+        serious: {
+          image: "dummy_ritsuka_serious.png",
+          text: "絶対に、無理して自分を犠牲にしないこと。私が瑞穂ちゃんを守るから！ 焼き尽くせ、『煉獄の七杭』ッ！！",
+          voice2_url: "dummy_v2.mp3"
+        }
+      },
+      {
+        id: "06",
+        name: "晴山 樹",
+        cv: "晴樹",
+        catchphrase: "どんな無理ゲーも笑って攻略する切り込み隊長。",
+        color_theme: "#FF8C00",
+        normal: {
+          image: "dummy_itsuki_normal.png",
+          text: "アタシは晴山樹！ ゲームと辛いものが好き！ 遠慮しないで、どんどんいこうぜ！",
+          voice1_url: "dummy_v1.mp3"
+        },
+        serious: {
+          image: "dummy_itsuki_serious.png",
+          text: "人生なんていう名のクソゲーも、全部、攻略してみせるから！ ゆゆうじょうパパワァァァーッ！！！",
+          voice2_url: "dummy_v2.mp3"
+        }
+      },
+      {
+        id: "07",
+        name: "護乃 豪",
+        cv: "森野 ベアー",
+        catchphrase: "ワイルドと叡智の共演。学園が誇る最強の盾。",
+        color_theme: "#8B4513",
+        normal: {
+          image: "dummy_gou_normal.png",
+          text: "みんなおはよう！ 教官の補佐を務める護乃豪だ！ よろしくな！",
+          voice1_url: "dummy_v1.mp3"
+        },
+        serious: {
+          image: "dummy_gou_serious.png",
+          text: "守るべき笑顔があるから、俺はここに立っている。どんな絶望も、この腕でぶっ壊してやる！",
+          voice2_url: "dummy_v2.mp3"
+        }
+      },
+      {
+        id: "08",
+        name: "嘉地 杏子",
+        cv: "an-nzu",
+        catchphrase: "受け継がれる伝統と、迷いなき一閃。",
+        color_theme: "#DC143C",
+        normal: {
+          image: "dummy_kyoko_normal.png",
+          text: "私は嘉地杏子。ふふ、そんなに緊張しなくていいわ。可愛がってあげるから、ついていらっしゃい。",
+          voice1_url: "dummy_v1.mp3"
+        },
+        serious: {
+          image: "dummy_kyoko_serious.png",
+          text: "私の間合いに入ったのが運の尽きよ。……『後の先』、見せてあげるわ。",
+          voice2_url: "dummy_v2.mp3"
+        }
+      },
+      {
+        id: "09",
+        name: "弼辺 徹",
+        cv: "今仁 いたる",
+        catchphrase: "奇想天外な創造で、世界を塗り替える絵師。",
+        color_theme: "#4169E1",
+        normal: {
+          image: "dummy_itaru_normal.png",
+          text: "やぁやぁ、私は弼辺徹って言うの！ よろしくねー！ んふふ、今日も推しの関係性が尊いわ！",
+          voice1_url: "dummy_v1.mp3"
+        },
+        serious: {
+          image: "dummy_itaru_serious.png",
+          text: "世界は一冊の薄い本！ 君たちのすべてを、私の愛で塗りつぶして魅せるわ！",
+          voice2_url: "dummy_v2.mp3"
+        }
+      },
+      {
+        id: "10",
+        name: "鈴鳴 拳士郎",
+        cv: "ベルナックル",
+        catchphrase: "この食卓が、俺たちの帰る場所。",
+        color_theme: "#228B22",
+        normal: {
+          image: "dummy_kenshirou_normal.png",
+          text: "鈴鳴拳士郎ってね、ま、よろしく頼むわ！ 腹が減ったら『ハーベストスター』に来な。特製チャーハン作ってやるよ！",
+          voice1_url: "dummy_v1.mp3"
+        },
+        serious: {
+          image: "dummy_kenshirou_serious.png",
+          text: "心まで冷え切ったなら、いつでもここへ帰ってこい。……この温もりだけは、俺が守る！",
+          voice2_url: "dummy_v2.mp3"
+        }
+      },
+      {
+        id: "11",
+        name: "振須 響",
+        cv: "フリスク",
+        catchphrase: "錆びついた魂を呼び覚ます、最強のムードメーカー。",
+        color_theme: "#00CED1",
+        normal: {
+          image: "dummy_hibiki_normal.png",
+          text: "どないしたん？ 辛気臭い顔して。ため息ばっか吐いてたら、幸せも逃げてくで？",
+          voice1_url: "dummy_v1.mp3"
+        },
+        serious: {
+          image: "dummy_hibiki_serious.png",
+          text: "下向くなや！ 顔上げぇや！ 錆びついたお前の魂ごと、俺が今、SHARPENS YOU UP！",
+          voice2_url: "dummy_v2.mp3"
+        }
+      },
+      {
+        id: "12",
+        name: "瀬田 奏真",
+        cv: "せいた",
+        catchphrase: "視線をスマートに運ぶ、プロの運び屋。",
+        color_theme: "#556B2F",
+        normal: {
+          image: "dummy_soma_normal.png",
+          text: "瀬田奏真だ。……アーツ？ 知ったことか。俺に言わせりゃ、これはただの『勘』だ。",
+          voice1_url: "dummy_v1.mp3"
+        },
+        serious: {
+          image: "dummy_soma_serious.png",
+          text: "振り落とされるなよ。どんな危険な道だろうと、俺が最短ルートで運んでやる。",
+          voice2_url: "dummy_v2.mp3"
+        }
+      },
+      {
+        id: "13",
+        name: "蜂城 美麗",
+        cv: "HONEY",
+        catchphrase: "全ての本質を見抜く、美しき鑑定士。",
+        color_theme: "#FFD700",
+        normal: {
+          image: "dummy_mirei_normal.png",
+          text: "宝石も人も、磨けば光るのよ。……さて、貴方の輝き、見せて貰えるかしら？",
+          voice1_url: "dummy_v1.mp3"
+        },
+        serious: {
+          image: "dummy_mirei_serious.png",
+          text: "私の『審美眼』は誤魔化せないわ。……その偽りの輝き、ここで砕いてあげる。",
+          voice2_url: "dummy_v2.mp3"
+        }
+      },
+      {
+        id: "14",
+        name: "天宮 澪",
+        cv: "猫宮 レイン",
+        catchphrase: "雨の日に拾われた、誇り高き亜人の少女。",
+        color_theme: "#708090",
+        normal: {
+          image: "dummy_rei_normal.png",
+          text: "アタシは天宮澪。……はぁ、人間って面倒。ちょっと、煙草吸ってくる。",
+          voice1_url: "dummy_v1.mp3"
+        },
+        serious: {
+          image: "dummy_rei_serious.png",
+          text: "座長から託されたこの力……。アタシが「アタシ」でいるための、唯一のプライドなんだから！",
+          voice2_url: "dummy_v2.mp3"
+        }
+      },
+      {
+        id: "15",
+        name: "孤ヶ爪 ミヤコ",
+        cv: "テトミヤ",
+        catchphrase: "その速さの先へ。学園最速の斥候。",
+        color_theme: "#D2B48C",
+        normal: {
+          image: "dummy_miyako_normal.png",
+          text: "そういう事なら、みゃーこに任せてね！ どこでもあっという間に調べてくるよ！",
+          voice1_url: "dummy_v1.mp3"
+        },
+        serious: {
+          image: "dummy_miyako_serious.png",
+          text: "敵の死角は完全に捉えたよ！ みんな、みゃーこに続いて！ 一番乗りで駆け抜けるね！",
+          voice2_url: "dummy_v2.mp3"
+        }
+      },
+      {
+        id: "16",
+        name: "片桐 玄人",
+        cv: "片桐",
+        catchphrase: "溢れ出る物語と共に、運命を顕現させる。",
+        color_theme: "#2F4F4F",
+        normal: {
+          image: "dummy_kurodo_normal.png",
+          text: "本を読むと世界が広がるね。そうだ、君も一緒に読むかい？ 面白い物語があるんだ。",
+          voice1_url: "dummy_v1.mp3"
+        },
+        serious: {
+          image: "dummy_kurodo_serious.png",
+          text: "顕現せよ、我が物語！ ページを破りて来たれ、英雄の影！ この身が滅びても、答えは渡さない！",
+          voice2_url: "dummy_v2.mp3"
+        }
+      },
+      {
+        id: "17",
+        name: "音染 悠理",
+        cv: "大里 悠",
+        catchphrase: "静寂のなかで、本当の言葉を探す模倣者。",
+        color_theme: "#8A2BE2",
+        normal: {
+          image: "dummy_yuri_normal.png",
+          text: "やあ。君も来てたんだ。……ここは静かで落ち着くね。",
+          voice1_url: "dummy_v1.mp3"
+        },
+        serious: {
+          image: "dummy_yuri_serious.png",
+          text: "探してる、僕だけの言葉（メロディ）。誰かの模倣じゃなくて……本当の響きで、君を救いたい！",
+          voice2_url: "dummy_v2.mp3"
+        }
+      },
+      {
+        id: "18",
+        name: "呱々崎 璦萌",
+        cv: "女狐 リラ",
+        catchphrase: "信仰を集める、お稲荷様VTuber。",
+        color_theme: "#FFB6C1",
+        normal: {
+          image: "dummy_tamamo_normal.png",
+          text: "んふふ…来ちゃった、そんな訳でみんなよろしくね！ 妾の信者第一号にしてやろうぞ！",
+          voice1_url: "dummy_v1.mp3"
+        },
+        serious: {
+          image: "dummy_tamamo_serious.png",
+          text: "妾を誰じゃと思うておる！ 世界中の信者たちよ、妾に力をーッ！",
+          voice2_url: "dummy_v2.mp3"
+        }
+      },
+      {
+        id: "19",
+        name: "月惺 あめ",
+        cv: "惺月",
+        catchphrase: "真夜中のキッチンに佇む、癒やし手。",
+        color_theme: "#F0E68C",
+        normal: {
+          image: "dummy_ame_normal.png",
+          text: "月惺あめ…です。……よかったら、お菓子、ひとくちいかがですか…？",
+          voice1_url: "dummy_v1.mp3"
+        },
+        serious: {
+          image: "dummy_ame_serious.png",
+          text: "戦うのは苦手です……。でも、戦うみんなの心を温めることは、できるから……！ 届け、『甘き安寧』！",
+          voice2_url: "dummy_v2.mp3"
+        }
+      },
+      {
+        id: "20",
+        name: "若宮 征士郎",
+        cv: "？？？",
+        catchphrase: "過去の過ちを背負い、未来の盾となる鋼の鬼教官。",
+        color_theme: "#1C1C1C",
+        normal: {
+          image: "dummy_seishirou_normal.png",
+          text: "私は若宮征士郎。この学園の教官だ。お前たちがここで生き残れるか、私の目で判断させてもらう。",
+          voice1_url: "dummy_v1.mp3"
+        },
+        serious: {
+          image: "dummy_seishirou_serious.png",
+          text: "撤退は禁ずる！ 敗北も禁ずる！ ただ、勝利の雄叫びだけをこの雪原に響かせよ！！",
+          voice2_url: "dummy_v2.mp3"
+        }
+      },
+      {
+        id: "21",
+        name: "一色 紗理",
+        cv: "？？？",
+        catchphrase: "魂の波長を調律する、気だるげな孤高の天才医師。",
+        color_theme: "#191970",
+        normal: {
+          image: "dummy_sari_normal.png",
+          text: "一色紗理よ。あー、だるい……。で、要件は？ 診察なら早くしなさい。",
+          voice1_url: "dummy_v1.mp3"
+        },
+        serious: {
+          image: "dummy_sari_serious.png",
+          text: "黙って私の指示に従いなさい！ ここは私の戦場よ！ 何度だって治してあげる！！",
+          voice2_url: "dummy_v2.mp3"
+        }
+      },
+      {
+        id: "22",
+        name: "月景 遼",
+        cv: "スナイパー",
+        catchphrase: "学園のシステムを支える、天才エンジニア。",
+        color_theme: "#008080",
+        normal: {
+          image: "dummy_ryo_normal.png",
+          text: "月景遼だ。デバイスの不調かい？ ……そこに置いておいてくれ。後で見ておこう。",
+          voice1_url: "dummy_v1.mp3"
+        },
+        serious: {
+          image: "dummy_ryo_serious.png",
+          text: "照準（スコープ）の先、揺らめく不協和音……。僕の耳は、誤魔化せない。必ず守るよ、そのシグナル。",
+          voice2_url: "dummy_v2.mp3"
+        }
+      },
+      {
+        id: "23",
+        name: "久遠 戒",
+        cv: "？？？",
+        catchphrase: "祈りと共に全てを見守る、教会の管理者。",
+        color_theme: "#4B0082",
+        normal: {
+          image: "dummy_kai_normal.png",
+          text: "おや、迷える子羊かね？ 私は教会を担当している久遠戒だ。何か悩み事なら聞くよ。",
+          voice1_url: "dummy_v1.mp3"
+        },
+        serious: {
+          image: "dummy_kai_serious.png",
+          text: "さあ、どうするね？ 飼い殺されるか、未知の世界へ逃げ込むか。見せてもらおうか、君たちの『物語』を。",
+          voice2_url: "dummy_v2.mp3"
+        }
+      }
+    ];
+
+    /* ---------- character section ---------- */
+    let currentIndex = 0;
+    let expression = "normal"; // "normal" | "serious"
+    let transitioning = false;
+
+    const el = {
+      stage:      document.getElementById("char-stage"),
+      numBg:      document.getElementById("char-num-bg"),
+      image:      document.getElementById("char-image"),
+      imageLabel: document.getElementById("char-image-label"),
+      catch:      document.getElementById("char-catch"),
+      name:       document.getElementById("char-name"),
+      cv:         document.getElementById("char-cv"),
+      text:       document.getElementById("char-text"),
+      voiceBtn:   document.getElementById("voice-btn"),
+      voiceLabel: document.getElementById("voice-btn-label"),
+      exprNormal: document.getElementById("expr-normal"),
+      exprSerious:document.getElementById("expr-serious"),
+      current:    document.getElementById("char-current"),
+      total:      document.getElementById("char-total"),
+    };
+
+    function renderCharacter() {
+      const c = characterData[currentIndex];
+
+      /* C-4: SERIOUS差分が未登録（dummy_）の間はトグルを非表示にする */
+      const seriousReady = !c.serious.image.startsWith("dummy_");
+      if (!seriousReady) expression = "normal";
+      el.exprSerious.classList.toggle("hidden", !seriousReady);
+
+      const state = c[expression];
+
+      /* C-1: 一旦プレースホルダー枠に戻す（次の画像がロード失敗した場合の保険） */
+      portraitRoot.classList.remove("has-image");
+
+      el.stage.style.setProperty("--char-color", c.color_theme);
+      el.numBg.textContent = c.id;
+      el.image.src = state.image;
+      el.image.alt = c.name;
+      el.image.style.opacity = "";
+      /* キャッシュ済みで load が発火しない場合の保険 */
+      if (el.image.complete && el.image.naturalWidth > 0) portraitRoot.classList.add("has-image");
+      el.imageLabel.textContent = state.image;
+      el.catch.textContent = c.catchphrase;
+      el.name.textContent = c.name;
+      el.cv.textContent = c.cv;
+      el.text.textContent = state.text;
+      el.voiceLabel.textContent = expression === "normal" ? "VOICE 1" : "VOICE 2";
+      el.exprNormal.classList.toggle("active", expression === "normal");
+      el.exprSerious.classList.toggle("active", expression === "serious");
+      el.current.textContent = c.id;
+      el.total.textContent = String(characterData.length).padStart(2, "0");
+      document.querySelectorAll(".char-jump").forEach((b, i) => b.classList.toggle("active", i === currentIndex));
+    }
+
+    /* 斜めクリップパス＋フェードのキャラ切り替え */
+    function transitionTo(targetIndex) {
+      if (transitioning) return;
+      transitioning = true;
+      el.stage.classList.add("slash-out");
+      el.stage.addEventListener("animationend", function onOut() {
+        el.stage.removeEventListener("animationend", onOut);
+        currentIndex = targetIndex;
+        expression = "normal";
+        renderCharacter();
+        el.stage.classList.remove("slash-out");
+        el.stage.classList.add("slash-in");
+        el.stage.addEventListener("animationend", function onIn() {
+          el.stage.removeEventListener("animationend", onIn);
+          el.stage.classList.remove("slash-in");
+          transitioning = false;
+        });
+      });
+    }
+    function changeCharacter(dir) {
+      transitionTo((currentIndex + dir + characterData.length) % characterData.length);
+    }
+
+    document.getElementById("char-prev").addEventListener("click", () => changeCharacter(-1));
+    document.getElementById("char-next").addEventListener("click", () => changeCharacter(1));
+
+    /* 表情トグル */
+    el.exprNormal.addEventListener("click", () => { expression = "normal"; renderCharacter(); });
+    el.exprSerious.addEventListener("click", () => { expression = "serious"; renderCharacter(); });
+
+    /* Voice再生（静的UI：console.logのみ） */
+    el.voiceBtn.addEventListener("click", () => {
+      console.log(expression === "normal" ? "play voice1" : "play voice2");
+    });
+
+    /* 左右スワイプ切り替え（モバイル） */
+    (() => {
+      const viewport = document.getElementById("char-viewport");
+      let startX = 0, startY = 0;
+      viewport.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+      }, { passive: true });
+      viewport.addEventListener("touchend", (e) => {
+        const dx = e.changedTouches[0].clientX - startX;
+        const dy = e.changedTouches[0].clientY - startY;
+        if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+          changeCharacter(dx < 0 ? 1 : -1);
+        }
+      }, { passive: true });
+    })();
+
+    /* C-1: 画像ロード成功時にプレースホルダー枠を消し、立ち絵演出(C-2/C-3)を有効化 */
+    const portraitRoot = document.querySelector(".portrait-root");
+    el.image.addEventListener("load", () => portraitRoot.classList.add("has-image"));
+
+    /* クイックジャンプ番号（characterDataから生成） */
+    const charIndexWrap = document.getElementById("char-index");
+    charIndexWrap.innerHTML = characterData.map((c, i) =>
+      `<button class="char-jump w-8 h-7 font-en text-[10px] tracking-wider border border-white/15 text-white/50 hover:border-accent hover:text-accent transition-colors" data-i="${i}" aria-label="${c.name}を表示">${c.id}</button>`
+    ).join("");
+    charIndexWrap.querySelectorAll(".char-jump").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const target = Number(btn.dataset.i);
+        if (target !== currentIndex) transitionTo(target);
+      });
+    });
+
+    renderCharacter();
+
+    /* ---------- music data (配列に追加するだけで拡張可能) ---------- */
+    const musics = [
+      {
+        id: "01",
+        type: "CHARACTER SONG",
+        title: "Shattered Skies 【Side: Sky】",
+        artist: "Vo. 宵月空夜（CV. 言峰空也）",
+        jacket: "jacket_01.png",
+        audio_url: "dummy_m1.mp3",
+        url: "https://youtu.be/E3VK3FY9aRU"
+      },
+      {
+        id: "02",
+        type: "CHARACTER SONG",
+        title: "白銀の残響 【Side: Snow】",
+        artist: "Vo. 狐森雪人（CV. 雪狐）",
+        jacket: "jacket_02.png",
+        audio_url: "dummy_m2.mp3",
+        url: "https://youtu.be/qPkyC4R_FMs"
+      },
+      {
+        id: "03",
+        type: "CHARACTER SONG",
+        title: "レイニーキャット・グルーヴ",
+        artist: "Vo. 天宮澪（CV. 猫宮 レイン）",
+        jacket: "jacket_03.png",
+        audio_url: "dummy_m3.mp3",
+        url: "https://youtu.be/1OvzyPwushI"
+      }
+    ];
+
+    const musicTrack = document.getElementById("music-track");
+    musicTrack.innerHTML = musics.map((m) => `
+      <div class="music-card group relative shrink-0 w-[70%] sm:w-[45%] md:w-[31%] border border-white/15 bg-night/70 hover:border-accent transition-colors">
+        <div class="relative aspect-square bg-deepblue/50 overflow-hidden">
+          <span class="absolute inset-0 flex items-center justify-center font-en text-[10px] tracking-[.3em] text-white/40 pointer-events-none">JACKET</span>
+          ${m.jacket ? `<img src="${m.jacket}" alt="${m.title} ジャケット" class="jacket-img absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async" onerror="this.style.opacity=0">` : ""}
+          <span class="clip-tag absolute top-0 left-0 bg-accent text-night font-en font-bold text-xs px-3 py-1 tracking-widest">${m.id}</span>
+        </div>
+        <div class="p-3 md:p-4">
+          <p class="font-en text-[10px] tracking-[.3em] text-accent mb-1">${m.type}</p>
+          <p class="font-jp font-bold text-sm md:text-base leading-tight truncate">${m.title}</p>
+          <p class="font-jp font-light text-[11px] text-white/50 truncate mt-1 mb-3">${m.artist}</p>
+          ${m.url
+            ? `<a href="${m.url}" target="_blank" rel="noopener"
+                  class="inline-flex items-center gap-2 font-en text-xs tracking-widest border border-accent text-accent px-3 py-1.5 hover:bg-accent hover:text-night transition-colors">▶ PLAY</a>`
+            : `<span class="inline-flex items-center gap-2 font-en text-xs tracking-widest border border-white/20 text-white/30 px-3 py-1.5">COMING SOON</span>`}
+        </div>
+      </div>
+    `).join("");
+
+    document.getElementById("music-total").textContent = String(musics.length).padStart(2, "0");
+
+    const musicCardWidth = () => musicTrack.querySelector(".music-card").getBoundingClientRect().width + 16;
+    document.getElementById("music-prev").addEventListener("click", () => musicTrack.scrollBy({ left: -musicCardWidth(), behavior: "smooth" }));
+    document.getElementById("music-next").addEventListener("click", () => musicTrack.scrollBy({ left: musicCardWidth(), behavior: "smooth" }));
+    musicTrack.addEventListener("scroll", () => {
+      const i = Math.round(musicTrack.scrollLeft / musicCardWidth());
+      document.getElementById("music-cur").textContent = String(Math.min(i + 1, musics.length)).padStart(2, "0");
+    }, { passive: true });
+
+    /* ---------- novel data (配列に追加するだけで拡張可能) ---------- */
+    const novels = [
+      {
+        id: "01",
+        title: "空白の少女と、月夜の共犯者",
+        summary: "施設で育った、音の記憶しか持たない少女。月夜に出会った不思議な存在は、彼女に「月怜瑞穂」の名と、声の力を授ける――。",
+        cover: "dummy_novel_01.png",
+        url: "https://kakuyomu.jp/works/2912051602671195569/episodes/2912051602672487737"
+      },
+      {
+        id: "02",
+        title: "残響のふたり",
+        summary: "空夜と雪人、交わるはずのなかった二つの声。廃駅のホームに、小さな共鳴が生まれる。",
+        cover: "dummy_novel_02.png",
+        url: "#"
+      },
+      {
+        id: "03",
+        title: "星を繋ぐ夜",
+        summary: "初めての共同詠唱。震える声が重なった時、絶望の空に一筋の星が架かった――。",
+        cover: "dummy_novel_03.png",
+        url: "#"
+      }
+    ];
+
+    document.getElementById("novel-list").innerHTML = novels.map((n) => `
+      <article class="group relative border border-white/15 bg-night/60 hover:border-accent transition-colors flex flex-col">
+        <div class="relative aspect-[3/4] border-b border-white/15 bg-gradient-to-b from-deepblue/60 to-night overflow-hidden">
+          <img src="${n.cover}" alt="第${n.id}話 ${n.title} 表紙" class="absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async" onerror="this.style.opacity=0">
+          <span class="absolute inset-0 flex items-center justify-center font-en text-[10px] tracking-[.3em] text-white/40 pointer-events-none">COVER</span>
+          <span class="clip-tag absolute top-0 left-0 bg-accent text-night font-en font-bold text-xs px-3 py-1 tracking-widest">EPISODE ${n.id}</span>
+        </div>
+        <div class="p-4 flex flex-col flex-1">
+          <h3 class="font-jp font-bold text-lg mb-2">第${Number(n.id)}話「${n.title}」</h3>
+          <p class="font-jp font-light text-xs text-white/60 leading-relaxed mb-4 flex-1">${n.summary}</p>
+          ${n.url && n.url !== "#"
+            ? `<a href="${n.url}" target="_blank" rel="noopener"
+                 class="clip-tag self-start font-en tracking-widest text-xs px-4 py-2 border border-accent text-accent hover:bg-accent hover:text-night transition-colors">READ →</a>`
+            : `<button class="novel-read clip-tag self-start font-en tracking-widest text-xs px-4 py-2 border border-accent text-accent hover:bg-accent hover:text-night transition-colors"
+                 data-id="${n.id}">READ →</button>`}
+        </div>
+      </article>
+    `).join("");
+
+    document.querySelectorAll(".novel-read").forEach((btn) => {
+      btn.addEventListener("click", () => console.log("open novel" + btn.dataset.id));
+    });
+
+    /* ---------- script data (配列に追加するだけで拡張可能) ---------- */
+    const scripts = [
+      {
+        id: "01",
+        format: "VOICE DRAMA SCRIPT",
+        title: "ボイスドラマ「星繋ぎの夜」前編",
+        cast: "宵月空夜 / 狐森雪人",
+        url: "dummy_script_01.pdf"
+      },
+      {
+        id: "02",
+        format: "VOICE DRAMA SCRIPT",
+        title: "ボイスドラマ「星繋ぎの夜」後編",
+        cast: "宵月空夜 / 狐森雪人",
+        url: "dummy_script_02.pdf"
+      },
+      {
+        id: "03",
+        format: "READING PLAY",
+        title: "朗読劇「残響のモノローグ」",
+        cast: "宵月空夜",
+        url: "dummy_script_03.pdf"
+      }
+    ];
+
+    document.getElementById("script-list").innerHTML = scripts.map((s) => `
+      <div class="group relative flex items-center gap-4 md:gap-6 border border-white/15 bg-night/60 p-4 md:p-5 hover:border-accent transition-colors">
+        <span class="font-en font-semibold text-white/25 text-2xl md:text-3xl w-10 shrink-0 group-hover:text-accent/60 transition-colors">${s.id}</span>
+        <div class="flex-1 min-w-0">
+          <p class="font-en text-[10px] tracking-[.3em] text-accent mb-1">${s.format}</p>
+          <p class="font-jp font-bold text-base md:text-lg leading-tight">${s.title}</p>
+          <p class="font-jp font-light text-xs text-white/50 mt-1">出演：${s.cast}</p>
+        </div>
+        <button class="script-read clip-tag shrink-0 font-en tracking-widest text-xs px-4 py-2 border border-accent text-accent hover:bg-accent hover:text-night transition-colors"
+                data-id="${s.id}">READ →</button>
+      </div>
+    `).join("");
+
+    document.querySelectorAll(".script-read").forEach((btn) => {
+      btn.addEventListener("click", () => console.log("open script" + btn.dataset.id));
+    });
+
+    /* ---------- starfield ---------- */
+    document.querySelectorAll(".starfield").forEach((field) => {
+      const count = 90;
+      for (let i = 0; i < count; i++) {
+        const s = document.createElement("span");
+        s.className = "star";
+        const size = Math.random() * 2 + 0.5;
+        s.style.width = s.style.height = size + "px";
+        s.style.left = Math.random() * 100 + "%";
+        s.style.top = Math.random() * 100 + "%";
+        s.style.setProperty("--tw-dur", (Math.random() * 4 + 2) + "s");
+        s.style.setProperty("--tw-delay", (Math.random() * 4) + "s");
+        field.appendChild(s);
+      }
+    });
+
+    /* ---------- hero copy: reveal on enter viewport ---------- */
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("revealed");
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    document.querySelectorAll("[data-reveal]").forEach((t) => revealObserver.observe(t));
+
+    /* ---------- loading screen ---------- */
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        document.getElementById("loading").classList.add("done");
+      }, 1100);
+    });
+    /* 保険：loadが遅延しても最大2.5秒で解除 */
+    setTimeout(() => document.getElementById("loading").classList.add("done"), 2500);
+
+    /* ---------- スクロール出現アニメーション ---------- */
+    const srObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          srObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll("main section:not(#hero)").forEach((sec) => {
+      const container = sec.querySelector(".max-w-4xl, .max-w-5xl");
+      if (!container) return;
+      [...container.children].forEach((el, i) => {
+        el.classList.add("sr");
+        el.style.setProperty("--sr-delay", (i * 0.08) + "s");
+        srObserver.observe(el);
+      });
+    });
+
+    /* 保険: IntersectionObserverが動かない環境では3秒後に全て表示する */
+    let ioHealthy = false;
+    const ioSentinel = new IntersectionObserver(() => { ioHealthy = true; ioSentinel.disconnect(); });
+    ioSentinel.observe(document.body);
+    setTimeout(() => {
+      if (!ioHealthy) {
+        document.querySelectorAll(".sr").forEach((el) => el.classList.add("visible"));
+        document.querySelectorAll("[data-reveal]").forEach((el) => el.classList.add("revealed"));
+      }
+    }, 3000);
+
+    /* ---------- ナビのスクロール連動ハイライト ---------- */
+    const navLinks = [...document.querySelectorAll('header nav a[href^="#"]')];
+    const spyObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          navLinks.forEach((a) => a.classList.toggle("text-accent", a.getAttribute("href") === "#" + entry.target.id));
+        }
+      });
+    }, { rootMargin: "-40% 0px -55% 0px" });
+    ["story", "character", "music", "novel", "script"].forEach((id) => spyObserver.observe(document.getElementById(id)));
+
+    /* ---------- Galleryライトボックス（実画像のみ対象。dummy_はプレースホルダー） ---------- */
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightbox-img");
+    const lightboxCaption = document.getElementById("lightbox-caption");
+    const stillImages = [...document.querySelectorAll(".gallery-item img")].filter((img) => !img.getAttribute("src").startsWith("dummy"));
+    let stillIndex = 0;
+
+    function openLightbox(i) {
+      stillIndex = (i + stillImages.length) % stillImages.length;
+      const img = stillImages[stillIndex];
+      lightboxImg.src = img.getAttribute("src");
+      lightboxImg.alt = img.alt;
+      lightboxCaption.textContent = img.alt + "（" + (stillIndex + 1) + " / " + stillImages.length + "）";
+      lightbox.classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+    }
+    function closeLightbox() {
+      lightbox.classList.add("hidden");
+      document.body.style.overflow = "";
+    }
+    stillImages.forEach((img, i) => {
+      img.closest(".gallery-item").addEventListener("click", () => openLightbox(i));
+    });
+    lightbox.addEventListener("click", (e) => { if (e.target === lightbox) closeLightbox(); });
+    document.getElementById("lightbox-close").addEventListener("click", closeLightbox);
+    document.getElementById("lightbox-prev").addEventListener("click", () => openLightbox(stillIndex - 1));
+    document.getElementById("lightbox-next").addEventListener("click", () => openLightbox(stillIndex + 1));
+
+    /* ---------- キーボード操作（ライトボックス / キャラ切替） ---------- */
+    let charSectionInView = false;
+    new IntersectionObserver((entries) => {
+      entries.forEach((entry) => { charSectionInView = entry.isIntersecting; });
+    }, { threshold: 0.3 }).observe(document.getElementById("character"));
+
+    window.addEventListener("keydown", (e) => {
+      if (!lightbox.classList.contains("hidden")) {
+        if (e.key === "Escape") closeLightbox();
+        if (e.key === "ArrowLeft") openLightbox(stillIndex - 1);
+        if (e.key === "ArrowRight") openLightbox(stillIndex + 1);
+        return;
+      }
+      if (!charSectionInView) return;
+      if (e.key === "ArrowLeft") changeCharacter(-1);
+      if (e.key === "ArrowRight") changeCharacter(1);
+    });
+
+    /* ---------- トップへ戻るボタン ---------- */
+    const toTop = document.getElementById("to-top");
+    window.addEventListener("scroll", () => {
+      const show = window.scrollY > 600;
+      toTop.classList.toggle("opacity-0", !show);
+      toTop.classList.toggle("pointer-events-none", !show);
+    }, { passive: true });
+    toTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+
+    /* ---------- Hero: 星を繋ぐ（constellation） ---------- */
+    (() => {
+      const canvas = document.getElementById("constellation");
+      if (!canvas || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      const ctx = canvas.getContext("2d");
+      let stars = [];
+
+      function resize() {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        stars = Array.from({ length: 42 }, () => ({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height * 0.85,
+        }));
+      }
+      resize();
+      window.addEventListener("resize", resize);
+
+      /* 数秒ごとに近くの星3〜4個を線で繋ぎ、描き切ったら余韻を残して消える */
+      let links = [];
+      function spawnLink() {
+        const start = stars[Math.floor(Math.random() * stars.length)];
+        const chain = [start];
+        let cur = start;
+        for (let i = 0; i < 3; i++) {
+          const near = stars
+            .filter((s) => !chain.includes(s))
+            .map((s) => ({ s, d: Math.hypot(s.x - cur.x, s.y - cur.y) }))
+            .sort((a, b) => a.d - b.d)
+            .slice(0, 4);
+          if (!near.length) break;
+          cur = near[Math.floor(Math.random() * near.length)].s;
+          chain.push(cur);
+        }
+        if (chain.length > 1) links.push({ chain, t: 0 });
+      }
+      setInterval(() => { if (links.length < 3) spawnLink(); }, 2600);
+
+      (function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "rgba(135, 206, 235, .75)";
+        stars.forEach((s) => {
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, 1, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        links.forEach((l) => {
+          l.t += 1 / 360;                                   /* 約6秒で一生 */
+          const alpha = l.t < 0.5 ? l.t * 2 : (1 - l.t) * 2; /* フェードイン→アウト */
+          const total = l.chain.length - 1;
+          const segs = Math.min(1, l.t * 3) * total;         /* 前半で線が伸びる */
+          ctx.strokeStyle = "rgba(135, 206, 235, " + (alpha * 0.5).toFixed(3) + ")";
+          ctx.lineWidth = 0.7;
+          ctx.beginPath();
+          ctx.moveTo(l.chain[0].x, l.chain[0].y);
+          for (let i = 1; i <= Math.floor(segs); i++) ctx.lineTo(l.chain[i].x, l.chain[i].y);
+          const f = segs - Math.floor(segs);
+          if (Math.floor(segs) < total && f > 0) {
+            const a = l.chain[Math.floor(segs)], b = l.chain[Math.floor(segs) + 1];
+            ctx.lineTo(a.x + (b.x - a.x) * f, a.y + (b.y - a.y) * f);
+          }
+          ctx.stroke();
+        });
+        links = links.filter((l) => l.t < 1);
+        requestAnimationFrame(draw);
+      })();
+    })();
+
+    /* ---------- console easter egg ---------- */
+    console.log("%cVOICE CONNECT MEMORIAL", "color:#87CEEB; font-size:20px; font-weight:bold; font-style:italic;");
+    console.log("その声は、絶望を打ち砕く魔法になる。\n原作: https://kakuyomu.jp/works/2912051602671195569");
+
+    /* ---------- mobile nav ---------- */
+    const menuBtn = document.getElementById("menu-btn");
+    const mobileNav = document.getElementById("mobile-nav");
+    const menuLines = menuBtn.querySelectorAll(".menu-line");
+
+    function setMenu(open) {
+      mobileNav.classList.toggle("open", open);
+      menuBtn.setAttribute("aria-label", open ? "メニューを閉じる" : "メニューを開く");
+      menuLines[0].style.transform = open ? "translateY(8px) rotate(45deg)" : "";
+      menuLines[1].style.opacity = open ? "0" : "";
+      menuLines[2].style.transform = open ? "translateY(-8px) rotate(-45deg)" : "";
+    }
+    menuBtn.addEventListener("click", () => setMenu(!mobileNav.classList.contains("open")));
+    mobileNav.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setMenu(false)));
+  </script>
+</body>
+</html>
