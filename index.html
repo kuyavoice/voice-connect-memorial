@@ -150,6 +150,8 @@
     /* ============ character portrait: 実画像ロード時のみの演出 (C-1〜C-3) ============ */
     /* has-image は #char-image の load 成功時にJSが付与。ダミー枠のキャラには付かない */
     .portrait-root { transition: max-width .3s ease, width .3s ease; }
+    /* 立ち絵は新画像の準備完了までいったん隠し、準備後にフェードで出す（切替時の旧画像チラ見え防止） */
+    #char-image { transition: opacity .25s ease; }
     .portrait-root.has-image { width: 74%; max-width: 360px; }
     @media (min-width: 768px) {
       .portrait-root.has-image { max-width: 440px; }
@@ -1104,11 +1106,15 @@
 
       el.stage.style.setProperty("--char-color", c.color_theme);
       el.numBg.textContent = c.id;
+      /* 立ち絵を一旦隠してから差し替え（新画像デコード前に旧画像＋新テキストがズレて見えるのを防ぐ） */
+      el.image.style.opacity = "0";
       el.image.src = state.image;
       el.image.alt = c.name;
-      el.image.style.opacity = "";
-      /* キャッシュ済みで load が発火しない場合の保険（実画像のみ） */
-      if (!isDummy && el.image.complete && el.image.naturalWidth > 0) portraitRoot.classList.add("has-image");
+      /* キャッシュ済みで load が発火しない場合の保険：即座に表示（実画像のみ） */
+      if (!isDummy && el.image.complete && el.image.naturalWidth > 0) {
+        portraitRoot.classList.add("has-image");
+        el.image.style.opacity = "1";
+      }
       el.imageLabel.textContent = state.image;
       el.catch.textContent = c.catchphrase;
       el.name.textContent = c.name;
@@ -1174,9 +1180,12 @@
       }, { passive: true });
     })();
 
-    /* C-1: 画像ロード成功時にプレースホルダー枠を消し、立ち絵演出(C-2/C-3)を有効化 */
+    /* C-1: 画像ロード成功時にプレースホルダー枠を消し、立ち絵演出(C-2/C-3)を有効化＋フェード表示 */
     const portraitRoot = document.querySelector(".portrait-root");
-    el.image.addEventListener("load", () => portraitRoot.classList.add("has-image"));
+    el.image.addEventListener("load", () => {
+      portraitRoot.classList.add("has-image");
+      el.image.style.opacity = "1";
+    });
 
     /* クイックジャンプ番号（characterDataから生成） */
     const charIndexWrap = document.getElementById("char-index");
