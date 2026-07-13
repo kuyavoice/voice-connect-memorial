@@ -88,20 +88,20 @@
       100% { opacity: 1; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); transform: none; }
     }
 
-    /* ============ character slash transition ============ */
+    /* ============ character transition（軽いフェードのみ） ============ */
     #char-stage.slash-out {
-      animation: slashOut .3s cubic-bezier(.77, 0, .18, 1) forwards;
+      animation: charFadeOut .2s ease forwards;
     }
     #char-stage.slash-in {
-      animation: slashIn .3s cubic-bezier(.22, 1, .36, 1) forwards;
+      animation: charFadeIn .25s ease forwards;
     }
-    @keyframes slashOut {
-      from { opacity: 1; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
-      to   { opacity: 0; clip-path: polygon(100% 0, 100% 0, 0 100%, 0 100%); }
+    @keyframes charFadeOut {
+      from { opacity: 1; }
+      to   { opacity: 0; }
     }
-    @keyframes slashIn {
-      from { opacity: 0; clip-path: polygon(0 0, 0 0, 100% 100%, 100% 100%); }
-      to   { opacity: 1; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+    @keyframes charFadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
     }
 
     /* ============ character theming (--char-color is set from JS) ============ */
