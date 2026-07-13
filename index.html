@@ -1097,16 +1097,18 @@
 
       const state = c[expression];
 
-      /* C-1: 一旦プレースホルダー枠に戻す（次の画像がロード失敗した場合の保険） */
-      portraitRoot.classList.remove("has-image");
+      /* C-1: 新しい画像がダミー（＝ロード失敗する）ときだけプレースホルダー枠に戻す。
+         実画像→実画像の切替では has-image を維持し、一瞬だけ枠内クロップで見切れるのを防ぐ */
+      const isDummy = state.image.startsWith("dummy_");
+      if (isDummy) portraitRoot.classList.remove("has-image");
 
       el.stage.style.setProperty("--char-color", c.color_theme);
       el.numBg.textContent = c.id;
       el.image.src = state.image;
       el.image.alt = c.name;
       el.image.style.opacity = "";
-      /* キャッシュ済みで load が発火しない場合の保険 */
-      if (el.image.complete && el.image.naturalWidth > 0) portraitRoot.classList.add("has-image");
+      /* キャッシュ済みで load が発火しない場合の保険（実画像のみ） */
+      if (!isDummy && el.image.complete && el.image.naturalWidth > 0) portraitRoot.classList.add("has-image");
       el.imageLabel.textContent = state.image;
       el.catch.textContent = c.catchphrase;
       el.name.textContent = c.name;
