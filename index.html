@@ -1126,31 +1126,18 @@
     function transitionTo(targetIndex) {
       if (transitioning) return;
       transitioning = true;
-
-      /* 次キャラの立ち絵を先読みし、読み込み完了後に登場演出を開始する。
-         （大きなPNGの読み込み途中＝上下が欠けた状態の絵を見せないため） */
-      const nextSrc = characterData[targetIndex].normal.image;
-      const preloaded = new Promise((resolve) => {
-        if (nextSrc.startsWith("dummy_")) { resolve(); return; }
-        const pre = new Image();
-        pre.onload = pre.onerror = () => resolve();
-        pre.src = nextSrc;
-      });
-
       el.stage.classList.add("slash-out");
       el.stage.addEventListener("animationend", function onOut() {
         el.stage.removeEventListener("animationend", onOut);
-        preloaded.then(() => {
-          currentIndex = targetIndex;
-          expression = "normal";
-          renderCharacter();
-          el.stage.classList.remove("slash-out");
-          el.stage.classList.add("slash-in");
-          el.stage.addEventListener("animationend", function onIn() {
-            el.stage.removeEventListener("animationend", onIn);
-            el.stage.classList.remove("slash-in");
-            transitioning = false;
-          });
+        currentIndex = targetIndex;
+        expression = "normal";
+        renderCharacter();
+        el.stage.classList.remove("slash-out");
+        el.stage.classList.add("slash-in");
+        el.stage.addEventListener("animationend", function onIn() {
+          el.stage.removeEventListener("animationend", onIn);
+          el.stage.classList.remove("slash-in");
+          transitioning = false;
         });
       });
     }
