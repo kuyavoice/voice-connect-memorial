@@ -7,3 +7,7 @@ Firefly*
 *_rgba.png
 1.png
 *.jpg
+
+# キャラ立ち絵の元PNG（配信はWebPに変換済み。PNGはローカル保管の元データ）
+*_normal.png
+*_serious.png
