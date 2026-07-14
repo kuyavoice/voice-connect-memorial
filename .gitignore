@@ -11,3 +11,6 @@ Firefly*
 # キャラ立ち絵の元PNG（配信はWebPに変換済み。PNGはローカル保管の元データ）
 *_normal.png
 *_serious.png
+
+# Novel表紙の元PNG（配信はnovel_*.webp。PNGはローカル保管の元データ）
+novel_cover*.png

@@ -558,11 +558,19 @@
 
     <section id="novel" class="relative py-24 px-4 bg-night">
       <div class="max-w-4xl mx-auto">
-        <h2 class="font-en text-4xl md:text-5xl font-semibold tracking-widest mb-8">
+        <h2 class="font-en text-4xl md:text-5xl font-semibold tracking-widest mb-2">
           <span class="text-accent">/</span> NOVEL
         </h2>
-        <!-- 連載ノベル一覧（JSのnovels配列から描画） -->
-        <div id="novel-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
+        <p class="font-en text-xs tracking-[.3em] text-white/40 mb-8">SERIAL NOVEL — 四季で綴る、声の物語</p>
+        <!-- 四季アーク（JSのnovels配列から描画） -->
+        <div id="novel-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"></div>
+        <div class="mt-8 text-center">
+          <a href="https://kakuyomu.jp/works/2912051602671195569" target="_blank" rel="noopener"
+             class="inline-flex items-center gap-2 font-en text-sm tracking-widest text-accent hover:text-white transition-colors">
+            カクヨムで最新話まで読む →
+          </a>
+          <p class="font-jp font-light text-xs text-white/40 mt-2">連載中・毎日更新</p>
+        </div>
       </div>
     </section>
 
@@ -1284,53 +1292,51 @@
       document.getElementById("music-cur").textContent = String(Math.min(i + 1, musics.length)).padStart(2, "0");
     }, { passive: true });
 
-    /* ---------- novel data (配列に追加するだけで拡張可能) ---------- */
+    /* ---------- novel data（四季アーク。表紙とURLが揃った季節から点灯） ---------- */
     const novels = [
       {
-        id: "01",
-        title: "空白の少女と、月夜の共犯者",
-        summary: "施設で育った、音の記憶しか持たない少女。月夜に出会った不思議な存在は、彼女に「月怜瑞穂」の名と、声の力を授ける――。",
-        cover: "dummy_novel_01.png",
+        id: "01", part: "第一部", season: "声繋ぎの春", en: "Spring of Voices",
+        range: "第1話 — 第24話",
+        summary: "音の記憶だけを頼りに生きてきた少女が、月夜の出会いで声の力に目覚める。すべての物語が始まる、過去編。",
+        cover: "novel_spring.webp",
         url: "https://kakuyomu.jp/works/2912051602671195569/episodes/2912051602672487737"
       },
       {
-        id: "02",
-        title: "残響のふたり",
-        summary: "空夜と雪人、交わるはずのなかった二つの声。廃駅のホームに、小さな共鳴が生まれる。",
-        cover: "dummy_novel_02.png",
-        url: "#"
+        id: "02", part: "第二部", season: "約束の夏", en: "Summer of Promises",
+        range: "第25話 —", summary: "", cover: "", url: ""
       },
       {
-        id: "03",
-        title: "星を繋ぐ夜",
-        summary: "初めての共同詠唱。震える声が重なった時、絶望の空に一筋の星が架かった――。",
-        cover: "dummy_novel_03.png",
-        url: "#"
+        id: "03", part: "第三部", season: "星降る秋", en: "Autumn of Bonds",
+        range: "", summary: "", cover: "", url: ""
+      },
+      {
+        id: "04", part: "第四部", season: "沈黙の冬", en: "Winter of Silence",
+        range: "", summary: "", cover: "", url: ""
       }
     ];
 
     document.getElementById("novel-list").innerHTML = novels.map((n) => `
-      <article class="group relative border border-white/15 bg-night/60 hover:border-accent transition-colors flex flex-col">
-        <div class="relative aspect-[3/4] border-b border-white/15 bg-gradient-to-b from-deepblue/60 to-night overflow-hidden">
-          <img src="${n.cover}" alt="第${n.id}話 ${n.title} 表紙" class="absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async" onerror="this.style.opacity=0">
-          <span class="absolute inset-0 flex items-center justify-center font-en text-[10px] tracking-[.3em] text-white/40 pointer-events-none">COVER</span>
-          <span class="clip-tag absolute top-0 left-0 bg-accent text-night font-en font-bold text-xs px-3 py-1 tracking-widest">EPISODE ${n.id}</span>
+      <article class="group relative border border-white/15 bg-night/60 hover:border-accent transition-colors flex flex-col overflow-hidden">
+        <div class="relative aspect-[2/3] overflow-hidden bg-gradient-to-b from-deepblue/50 to-night">
+          ${n.cover
+            ? `<img src="${n.cover}" alt="〈${n.season}〉表紙" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" onerror="this.style.opacity=0">`
+            : ``}
+          <span class="clip-tag absolute top-0 left-0 z-10 bg-accent text-night font-en font-bold text-xs px-3 py-1 tracking-widest">${n.part}</span>
+          <div class="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-night via-night/75 to-transparent">
+            <p class="font-jp font-black text-lg md:text-xl leading-tight">〈${n.season}〉</p>
+            <p class="font-en text-[10px] tracking-[.25em] text-accent">${n.en}</p>
+          </div>
         </div>
         <div class="p-4 flex flex-col flex-1">
-          <h3 class="font-jp font-bold text-lg mb-2">第${Number(n.id)}話「${n.title}」</h3>
+          <p class="font-en text-[11px] tracking-widest text-white/50 mb-2">${n.range || "COMING SOON"}</p>
           <p class="font-jp font-light text-xs text-white/60 leading-relaxed mb-4 flex-1">${n.summary}</p>
-          ${n.url && n.url !== "#"
+          ${n.url
             ? `<a href="${n.url}" target="_blank" rel="noopener"
-                 class="clip-tag self-start font-en tracking-widest text-xs px-4 py-2 border border-accent text-accent hover:bg-accent hover:text-night transition-colors">READ →</a>`
-            : `<button class="novel-read clip-tag self-start font-en tracking-widest text-xs px-4 py-2 border border-accent text-accent hover:bg-accent hover:text-night transition-colors"
-                 data-id="${n.id}">READ →</button>`}
+                 class="clip-tag self-start font-en tracking-widest text-xs px-4 py-2 border border-accent text-accent hover:bg-accent hover:text-night transition-colors">第1話から読む →</a>`
+            : `<span class="clip-tag self-start font-en tracking-widest text-xs px-4 py-2 border border-white/20 text-white/30">COMING SOON</span>`}
         </div>
       </article>
     `).join("");
-
-    document.querySelectorAll(".novel-read").forEach((btn) => {
-      btn.addEventListener("click", () => console.log("open novel" + btn.dataset.id));
-    });
 
     /* ---------- script data (配列に追加するだけで拡張可能) ---------- */
     const scripts = [
