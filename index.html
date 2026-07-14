@@ -1106,11 +1106,16 @@
 
       el.stage.style.setProperty("--char-color", c.color_theme);
       el.numBg.textContent = c.id;
-      /* 立ち絵を一旦隠してから差し替え（新画像デコード前に旧画像＋新テキストがズレて見えるのを防ぐ） */
+      /* 立ち絵を「即座に」隠してから差し替え（旧画像＋新テキストのズレ防止）。
+         transitionを一時無効化して瞬時にopacity:0にする＝隠す時はフェードさせない。
+         回線が遅く新画像のデコードが遅れても、旧画像がフェード中に見えることがなくなる */
+      el.image.style.transition = "none";
       el.image.style.opacity = "0";
+      void el.image.offsetWidth;        /* 強制リフローで即時反映 */
+      el.image.style.transition = "";   /* CSSの0.25sフェードに戻す（表示時のみ効く） */
       el.image.src = state.image;
       el.image.alt = c.name;
-      /* キャッシュ済みで load が発火しない場合の保険：即座に表示（実画像のみ） */
+      /* キャッシュ済みで load が発火しない場合の保険：フェードで表示（実画像のみ） */
       if (!isDummy && el.image.complete && el.image.naturalWidth > 0) {
         portraitRoot.classList.add("has-image");
         el.image.style.opacity = "1";
