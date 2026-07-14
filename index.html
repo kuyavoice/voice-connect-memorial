@@ -568,10 +568,11 @@
 
     <section id="script" class="relative py-24 px-4 bg-midnight clip-slant-t">
       <div class="max-w-4xl mx-auto">
-        <h2 class="font-en text-4xl md:text-5xl font-semibold tracking-widest mb-8">
+        <h2 class="font-en text-4xl md:text-5xl font-semibold tracking-widest mb-2">
           <span class="text-accent">/</span> SCRIPT
         </h2>
-        <!-- 台本アーカイブ（JSのscripts配列から描画） -->
+        <p class="font-en text-xs tracking-[.3em] text-white/40 mb-8">VOICE WORKS — 公式YouTubeにて公開中</p>
+        <!-- ボイス作品（JSのscripts配列から描画） -->
         <div id="script-list" class="flex flex-col gap-4"></div>
       </div>
     </section>
@@ -1335,24 +1336,24 @@
     const scripts = [
       {
         id: "01",
-        format: "VOICE DRAMA SCRIPT",
-        title: "ボイスドラマ「星繋ぎの夜」前編",
-        cast: "宵月空夜 / 狐森雪人",
-        url: "dummy_script_01.pdf"
+        format: "TEASER PV",
+        title: "「ボイスコネクトメモリアル」ティザーPV",
+        desc: "これは、世界を救うことになる彼らの、何気ない日常の物語。",
+        url: "https://www.youtube.com/watch?v=DHXxE9YXBEA"
       },
       {
         id: "02",
-        format: "VOICE DRAMA SCRIPT",
-        title: "ボイスドラマ「星繋ぎの夜」後編",
-        cast: "宵月空夜 / 狐森雪人",
-        url: "dummy_script_02.pdf"
+        format: "FULL VOICE DRAMA",
+        title: "甘味決戦！乙女たちのバレンタイン・パニック2026",
+        desc: "2月14日、決戦の火蓋は切って落とされた——。乙女たちのバレンタイン群像劇。",
+        url: "https://www.youtube.com/watch?v=EO2cvO56FIQ"
       },
       {
         id: "03",
-        format: "READING PLAY",
-        title: "朗読劇「残響のモノローグ」",
-        cast: "宵月空夜",
-        url: "dummy_script_03.pdf"
+        format: "FULL VOICE DRAMA",
+        title: "傷だらけのチョコと、星屑のキャンディ。―3つのホワイトデーの物語―",
+        desc: "甘味決戦を生き抜いた乙女たちへ、戦う男たちからのお返しを。ホワイトデーの3つの物語。",
+        url: "https://www.youtube.com/watch?v=Nd9m1MgM7e0"
       }
     ];
 
@@ -1362,10 +1363,13 @@
         <div class="flex-1 min-w-0">
           <p class="font-en text-[10px] tracking-[.3em] text-accent mb-1">${s.format}</p>
           <p class="font-jp font-bold text-base md:text-lg leading-tight">${s.title}</p>
-          <p class="font-jp font-light text-xs text-white/50 mt-1">出演：${s.cast}</p>
+          <p class="font-jp font-light text-xs text-white/50 mt-1 leading-relaxed">${s.desc}</p>
         </div>
-        <button class="script-read clip-tag shrink-0 font-en tracking-widest text-xs px-4 py-2 border border-accent text-accent hover:bg-accent hover:text-night transition-colors"
-                data-id="${s.id}">READ →</button>
+        ${s.url && s.url !== "#"
+          ? `<a href="${s.url}" target="_blank" rel="noopener"
+                class="clip-tag shrink-0 font-en tracking-widest text-xs px-4 py-2 border border-accent text-accent hover:bg-accent hover:text-night transition-colors">WATCH →</a>`
+          : `<button class="script-read clip-tag shrink-0 font-en tracking-widest text-xs px-4 py-2 border border-accent text-accent hover:bg-accent hover:text-night transition-colors"
+                data-id="${s.id}">READ →</button>`}
       </div>
     `).join("");
 
