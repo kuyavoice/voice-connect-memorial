@@ -242,6 +242,22 @@
       border-color: #87CEEB;
     }
 
+    /* ============ hero: ロゴ背後の微光（声が光になるイメージ） ============ */
+    .hero-glow {
+      position: absolute;
+      inset: -45% -30%;
+      background: radial-gradient(ellipse at center,
+        rgba(135, 206, 235, .16) 0%,
+        rgba(135, 206, 235, .055) 42%,
+        transparent 70%);
+      animation: glowPulse 7s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes glowPulse {
+      0%, 100% { opacity: .55; transform: scale(1); }
+      50%      { opacity: 1;   transform: scale(1.07); }
+    }
+
     /* ============ hero: 声の波形イコライザー ============ */
     .eq span {
       display: block;
@@ -264,7 +280,7 @@
     /* ============ reduced motion ============ */
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
-      .star, .shooting, .loading-bar { animation: none !important; }
+      .star, .shooting, .loading-bar, .hero-glow { animation: none !important; }
       .eq, #constellation { display: none !important; }
       .sr, .hero-reveal {
         animation: none !important;
@@ -360,6 +376,7 @@
 
       <!-- logo image frame (dummy src) -->
       <div class="relative w-[82%] max-w-xl aspect-[16/7] flex items-center justify-center">
+        <div class="hero-glow" aria-hidden="true"></div>
         <img src="logo_dummy.png" alt="ボイスコネクトメモリアル ロゴ" class="absolute inset-0 w-full h-full object-contain"
              onerror="this.style.display='none'">
         <!-- タイポグラフィ版ロゴ（logo_dummy.png が配置されたら画像が上に被さる） -->
