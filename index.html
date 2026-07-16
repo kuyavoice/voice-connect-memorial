@@ -1157,6 +1157,9 @@
       el.cv.textContent = c.cv;
       el.text.textContent = state.text;
       el.voiceLabel.textContent = expression === "normal" ? "VOICE 1" : "VOICE 2";
+      /* 音声が未登録（dummy_）の間はVOICEボタン自体を非表示（実ファイルが来たら自動出現） */
+      const voiceUrl = expression === "normal" ? state.voice1_url : state.voice2_url;
+      el.voiceBtn.style.display = (!voiceUrl || voiceUrl.startsWith("dummy_")) ? "none" : "";
       el.exprNormal.classList.toggle("active", expression === "normal");
       el.exprSerious.classList.toggle("active", expression === "serious");
       el.current.textContent = c.id;
