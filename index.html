@@ -235,6 +235,30 @@
       100%    { opacity: 0; transform: rotate(-30deg) translateX(-280px); }
     }
 
+    /* ============ character: スマホ用スワイプヒント（左右の小さな矢印） ============ */
+    .char-edge-hint {
+      position: absolute;
+      top: 30%;
+      z-index: 20;
+      padding: .5rem .4rem;
+      color: rgba(255, 255, 255, .5);
+      text-shadow: 0 0 10px rgba(135, 206, 235, .6);
+      animation: edgeHintR 2.4s ease-in-out infinite;
+      transition: opacity .6s ease;
+    }
+    .char-edge-hint.left  { left: 0;  animation-name: edgeHintL; }
+    .char-edge-hint.right { right: 0; }
+    @keyframes edgeHintR {
+      0%, 100% { transform: translateX(0);   opacity: .3; }
+      50%      { transform: translateX(4px); opacity: .85; }
+    }
+    @keyframes edgeHintL {
+      0%, 100% { transform: translateX(0);    opacity: .3; }
+      50%      { transform: translateX(-4px); opacity: .85; }
+    }
+    /* 一度でも切替操作をしたらフェードアウト */
+    .char-edge-hint.dismissed { opacity: 0; pointer-events: none; }
+
     /* ============ character quick jump ============ */
     .char-jump.active {
       background: #87CEEB;
@@ -291,7 +315,7 @@
     /* ============ reduced motion ============ */
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
-      .star, .shooting, .loading-bar, .hero-glow { animation: none !important; }
+      .star, .shooting, .loading-bar, .hero-glow, .char-edge-hint { animation: none !important; }
       .eq, #constellation { display: none !important; }
       .sr, .hero-reveal {
         animation: none !important;
@@ -533,6 +557,10 @@
               </div>
             </div>
           </div>
+
+          <!-- スマホ用スワイプヒント（タップでも切替可・一度操作すると消える） -->
+          <button class="char-edge-hint left md:hidden font-en text-2xl" aria-label="前のキャラクターへ">&#x2039;</button>
+          <button class="char-edge-hint right md:hidden font-en text-2xl" aria-label="次のキャラクターへ">&#x203A;</button>
 
           <!-- pager: arrows + "01 / 02" indicator -->
           <div class="relative flex items-center justify-center gap-8 mt-10">
@@ -1187,6 +1215,8 @@
     function transitionTo(targetIndex) {
       if (transitioning) return;
       transitioning = true;
+      /* 初回の切替操作でスワイプヒントを消す */
+      document.querySelectorAll(".char-edge-hint").forEach((h) => h.classList.add("dismissed"));
       el.stage.classList.add("slash-out");
       el.stage.addEventListener("animationend", function onOut() {
         el.stage.removeEventListener("animationend", onOut);
@@ -1208,6 +1238,11 @@
 
     document.getElementById("char-prev").addEventListener("click", () => changeCharacter(-1));
     document.getElementById("char-next").addEventListener("click", () => changeCharacter(1));
+
+    /* スマホ用スワイプヒント: タップでも切替できる */
+    document.querySelectorAll(".char-edge-hint").forEach((h) => {
+      h.addEventListener("click", () => changeCharacter(h.classList.contains("left") ? -1 : 1));
+    });
 
     /* 表情トグル */
     el.exprNormal.addEventListener("click", () => { expression = "normal"; renderCharacter(); });
