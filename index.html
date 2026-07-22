@@ -277,6 +277,37 @@
       pointer-events: none;
     }
 
+    /* ============ hero: イントロ「二人が繋がる→タイトルへクロスフェード」 ============ */
+    /* 流れ: ローディング → 二人がゆっくりフェードイン(intro-in) → ひと呼吸
+       → 二人が夜に溶けていく(backdrop)のと同時にタイトル群がフェードイン。
+       1セッション1回のみ再生。タップ/スクロール/キーでスキップ可（JS制御） */
+    #hero-duo {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+    }
+    #hero-duo .duo-box { position: relative; width: 94%; max-width: 1040px; }
+    #hero-duo img {
+      width: 100%; height: auto; display: block;
+      /* 画像下端の切れ目を夜に溶かすフェード（スマホで特に目立つため） */
+      -webkit-mask-image: linear-gradient(to bottom, black 78%, transparent 99%);
+      mask-image: linear-gradient(to bottom, black 78%, transparent 99%);
+    }
+    #hero-duo.intro-in { animation: duoIn 1.1s ease .1s forwards; }
+    #hero-duo.backdrop { animation: none; opacity: .14; transition: opacity 1.2s ease; }
+    @keyframes duoIn {
+      from { opacity: 0; transform: scale(1.03); }
+      to   { opacity: 1; transform: none; }
+    }
+    /* イントロ中はタイトル群（ロゴ・キャッチ・波形）を隠し、二人の溶暗と同時にクロスフェードで出す。
+       !important はキャッチのslashRevealアニメ(fill:forwards)より優先させるため */
+    .hero-seq { transition: opacity 1.2s ease; }
+    body.intro-pending .hero-seq { opacity: 0 !important; }
+
     /* ============ hero: ロゴ背後の微光（声が光になるイメージ） ============ */
     .hero-glow {
       position: absolute;
@@ -341,9 +372,19 @@
   <div id="loading" class="fixed inset-0 z-[100] bg-night flex flex-col items-center justify-center overflow-hidden">
     <div class="starfield absolute inset-0"></div>
     <span class="clip-tag relative bg-accent text-night font-en font-bold text-base px-4 py-1.5 tracking-widest mb-6">VCM</span>
-    <div class="w-40 h-[2px] bg-white/20 relative overflow-hidden">
-      <div class="loading-bar absolute inset-0 bg-accent"></div>
+    <!-- 声の波形（読み込み中＝声を繋いでいる演出） -->
+    <div class="eq relative flex items-end gap-[3px] h-5 mb-5" aria-hidden="true">
+      <span style="animation-delay:-.7s;animation-duration:1.0s"></span>
+      <span style="animation-delay:-.3s;animation-duration:.8s"></span>
+      <span style="animation-delay:-1.1s;animation-duration:1.2s"></span>
+      <span style="animation-delay:-.5s;animation-duration:.75s"></span>
+      <span style="animation-delay:-.9s;animation-duration:1.05s"></span>
+      <span style="animation-delay:-.2s;animation-duration:.9s"></span>
+      <span style="animation-delay:-1.3s;animation-duration:1.15s"></span>
+      <span style="animation-delay:-.6s;animation-duration:.85s"></span>
+      <span style="animation-delay:-1s;animation-duration:1.1s"></span>
     </div>
+    <p class="font-en text-[10px] tracking-[.45em] text-white/50 relative -mr-[.45em]">CONNECTING VOICES...</p>
   </div>
 
   <!-- ================================================================
@@ -407,8 +448,15 @@
       <span class="shooting s2" style="top:32%; left:28%" aria-hidden="true"></span>
       <div class="hero-vignette" aria-hidden="true"></div>
 
+      <!-- イントロ&背景: 星座で繋がる二人（イントロ後は薄い背景として残る） -->
+      <div id="hero-duo" aria-hidden="true">
+        <div class="duo-box">
+          <img id="hero-duo-img" src="hero_duo.webp" alt="" decoding="async" onerror="this.style.display='none'">
+        </div>
+      </div>
+
       <!-- logo image frame (dummy src) -->
-      <div class="relative w-[82%] max-w-xl aspect-[16/7] flex items-center justify-center">
+      <div class="hero-seq relative w-[82%] max-w-xl aspect-[16/7] flex items-center justify-center">
         <div class="hero-glow" aria-hidden="true"></div>
         <img src="logo_dummy.png" alt="ボイスコネクトメモリアル ロゴ" class="absolute inset-0 w-full h-full object-contain"
              onerror="this.style.display='none'">
@@ -424,13 +472,13 @@
       </div>
 
       <!-- catchphrase -->
-      <p class="hero-reveal relative mt-10 md:mt-12 font-jp font-black text-xl md:text-3xl tracking-wider text-center px-6 leading-relaxed"
+      <p class="hero-seq hero-reveal relative mt-10 md:mt-12 font-jp font-black text-xl md:text-3xl tracking-wider text-center px-6 leading-relaxed"
          data-reveal>
         その声は、<span class="text-accent">絶望を打ち砕く魔法</span>になる
       </p>
 
       <!-- 声の波形（イコライザー） -->
-      <div class="eq relative mt-7 flex items-end gap-[3px] h-6" aria-hidden="true">
+      <div class="hero-seq eq relative mt-7 flex items-end gap-[3px] h-6" aria-hidden="true">
         <span style="animation-delay:-.9s;animation-duration:1.3s"></span>
         <span style="animation-delay:-.4s;animation-duration:.9s"></span>
         <span style="animation-delay:-1.2s;animation-duration:1.1s"></span>
@@ -1571,6 +1619,48 @@
       toTop.classList.toggle("pointer-events-none", !show);
     }, { passive: true });
     toTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+
+    /* ---------- Hero イントロ: 二人が繋がる→タイトル登場（1セッション1回・操作でスキップ） ---------- */
+    (() => {
+      const duo = document.getElementById("hero-duo");
+      const duoImg = document.getElementById("hero-duo-img");
+      let played = false;
+      try { played = sessionStorage.getItem("vcm_intro") === "1"; } catch (e) {}
+      /* ?intro をURLに付けると再訪でも強制再生（確認用） */
+      if (location.search.includes("intro")) played = false;
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      let started = false, t1;
+      const finish = () => {
+        clearTimeout(t1);
+        duo.classList.remove("intro-in");
+        duo.classList.add("backdrop");
+        document.body.classList.remove("intro-pending");
+        ["click", "touchstart", "wheel", "keydown"].forEach((ev) => window.removeEventListener(ev, finish));
+      };
+
+      /* 再訪・reduced-motion時はイントロを飛ばし、薄い背景として即表示 */
+      if (played || reduced) { duo.classList.add("backdrop"); return; }
+
+      document.body.classList.add("intro-pending");
+      try { sessionStorage.setItem("vcm_intro", "1"); } catch (e) {}
+      ["click", "touchstart", "wheel", "keydown"].forEach((ev) => window.addEventListener(ev, finish, { passive: true }));
+
+      const start = () => {
+        if (started) return;
+        started = true;
+        duo.classList.add("intro-in");        /* 二人がゆっくりフェードイン(1.1s) */
+        t1 = setTimeout(finish, 2000);        /* ひと呼吸おいて、二人の溶暗とタイトルをクロスフェード(1.2s) */
+      };
+      const begin = () => {
+        if (duoImg.complete && duoImg.naturalWidth > 0) start();
+        else if (duoImg.complete) finish();
+        else { duoImg.addEventListener("load", start); duoImg.addEventListener("error", finish); }
+      };
+      /* ローディング画面が消えるタイミング（load+1.1s）に合わせて開始。保険あり */
+      window.addEventListener("load", () => setTimeout(begin, 1150));
+      setTimeout(begin, 2600);
+    })();
 
     /* ---------- Hero: 星を繋ぐ（constellation） ---------- */
     (() => {
