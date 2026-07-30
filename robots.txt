@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kuyavoice.github.io/voice-connect-memorial/sitemap.xml

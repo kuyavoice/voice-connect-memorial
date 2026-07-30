@@ -12,6 +12,36 @@
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://kuyavoice.github.io/voice-connect-memorial/ogp.png">
+  <link rel="canonical" href="https://kuyavoice.github.io/voice-connect-memorial/">
+  <meta name="theme-color" content="#060913">
+
+  <!-- 構造化データ（検索エンジン向け） -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "name": "ボイスコネクトメモリアル 公式ポータルサイト",
+        "url": "https://kuyavoice.github.io/voice-connect-memorial/",
+        "inLanguage": "ja",
+        "description": "声が魔法になる世界で――。絶望と再生の現代ダークファンタジー『ボイスコネクトメモリアル』公式プロジェクトサイト。"
+      },
+      {
+        "@type": "CreativeWorkSeries",
+        "name": "ボイスコネクトメモリアル　〜声が魔法になる世界で、君と砕けた星を繋ぐ〜",
+        "author": {
+          "@type": "Person",
+          "name": "言峰空也",
+          "sameAs": "https://x.com/ku_yavoice"
+        },
+        "genre": "現代ダークファンタジー",
+        "inLanguage": "ja",
+        "url": "https://kakuyomu.jp/works/2912051602671195569"
+      }
+    ]
+  }
+  </script>
   <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><polygon points="0,0 64,0 50,64 0,64" fill="%2387CEEB"/><text x="28" y="45" font-family="Arial,sans-serif" font-weight="bold" font-size="30" text-anchor="middle" fill="%23060913">VC</text></svg>'>
 
   <!-- Google Fonts -->
@@ -622,6 +652,15 @@
 
           <!-- クイックジャンプ（番号で直接移動） -->
           <div id="char-index" class="relative flex flex-wrap justify-center gap-1.5 mt-6 max-w-md mx-auto"></div>
+
+          <!-- Xシェア（表示中キャラのディープリンク付き投稿） -->
+          <div class="relative text-center mt-6">
+            <a id="char-share" href="#" target="_blank" rel="noopener"
+               class="inline-flex items-center gap-2 font-en text-[11px] tracking-[.25em] text-white/40 hover:text-accent transition-colors">
+              <span class="clip-tag bg-white/10 px-2 py-0.5 font-bold text-white/70">X</span>
+              <span>SHARE THIS CHARACTER →</span>
+            </a>
+          </div>
         </div>
       </div>
     </section>
@@ -1191,6 +1230,7 @@
       exprSerious:document.getElementById("expr-serious"),
       current:    document.getElementById("char-current"),
       total:      document.getElementById("char-total"),
+      share:      document.getElementById("char-share"),
     };
 
     function renderCharacter() {
@@ -1238,6 +1278,11 @@
       el.current.textContent = c.id;
       el.total.textContent = String(characterData.length).padStart(2, "0");
       document.querySelectorAll(".char-jump").forEach((b, i) => b.classList.toggle("active", i === currentIndex));
+
+      /* Xシェアリンク更新（このキャラを直接開けるディープリンク付き） */
+      const shareUrl = "https://kuyavoice.github.io/voice-connect-memorial/#character-" + c.id;
+      const shareText = "『ボイスコネクトメモリアル』 " + c.name + "（CV. " + c.cv + "）\n「" + c.catchphrase + "」";
+      el.share.href = "https://x.com/intent/post?text=" + encodeURIComponent(shareText) + "&url=" + encodeURIComponent(shareUrl);
 
       /* 隣（次・前）のキャラ立ち絵をバックグラウンド先読み。初回スワイプもほぼ瞬時にする */
       preloadNeighbors();
@@ -1314,6 +1359,18 @@
         }
       }, { passive: true });
     })();
+
+    /* ディープリンク: #character-05 のようなURLで該当キャラを直接表示 */
+    const charHash = location.hash.match(/^#character-(\d{2})$/);
+    if (charHash) {
+      const idx = parseInt(charHash[1], 10) - 1;
+      if (idx >= 0 && idx < characterData.length) {
+        currentIndex = idx;
+        window.addEventListener("load", () => {
+          setTimeout(() => document.getElementById("character").scrollIntoView({ behavior: "instant" }), 150);
+        });
+      }
+    }
 
     /* C-1: 画像ロード成功時にプレースホルダー枠を消し、立ち絵演出(C-2/C-3)を有効化＋フェード表示 */
     const portraitRoot = document.querySelector(".portrait-root");
