@@ -373,6 +373,11 @@
     #lightbox.hidden { opacity: 0; pointer-events: none; display: flex; visibility: hidden; }
     #lightbox img { box-shadow: 0 0 60px -10px rgba(135, 206, 235, .35); }
 
+    /* ============ MV modal（MUSICのサイト内再生） ============ */
+    #mv-modal { transition: opacity .25s ease; }
+    #mv-modal.hidden { opacity: 0; pointer-events: none; display: flex; visibility: hidden; }
+    #mv-modal .mv-player { box-shadow: 0 0 60px -10px rgba(135, 206, 235, .35); }
+
     /* ============ reduced motion ============ */
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
@@ -805,6 +810,25 @@
             class="absolute left-3 md:left-6 top-1/2 -translate-y-1/2 w-11 h-11 border border-white/30 font-en text-xl hover:bg-accent hover:text-night hover:border-accent transition-colors">&#x2039;</button>
     <button id="lightbox-next" aria-label="次のスチル"
             class="absolute right-3 md:right-6 top-1/2 -translate-y-1/2 w-11 h-11 border border-white/30 font-en text-xl hover:bg-accent hover:text-night hover:border-accent transition-colors">&#x203A;</button>
+  </div>
+
+  <!-- ================================================================
+       MV MODAL（MUSICのサイト内再生）
+  ================================================================= -->
+  <div id="mv-modal" class="hidden fixed inset-0 z-[95] bg-night/95 flex items-center justify-center p-4 md:p-12">
+    <div class="w-full max-w-4xl">
+      <div class="mv-player relative aspect-video bg-black border border-white/15">
+        <iframe id="mv-frame" class="absolute inset-0 w-full h-full" src="" title="ミュージックビデオ再生"
+                allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
+      </div>
+      <div class="flex items-center justify-between mt-3 gap-4">
+        <p id="mv-caption" class="font-jp font-bold text-sm md:text-base truncate"></p>
+        <a id="mv-external" href="#" target="_blank" rel="noopener"
+           class="shrink-0 font-en text-[11px] tracking-[.2em] text-white/40 hover:text-accent transition-colors">WATCH ON YOUTUBE ↗</a>
+      </div>
+    </div>
+    <button id="mv-close" aria-label="閉じる"
+            class="absolute top-4 right-4 w-11 h-11 border border-white/30 font-en text-xl hover:bg-accent hover:text-night hover:border-accent transition-colors">✕</button>
   </div>
 
   <!-- back to top -->
@@ -1424,6 +1448,12 @@
       }
     ];
 
+    /* YouTube URLから動画IDを取り出す（youtu.be/ID・watch?v=ID 両対応） */
+    function ytVideoId(url) {
+      const m = (url || "").match(/(?:youtu\.be\/|[?&]v=)([\w-]{6,})/);
+      return m ? m[1] : null;
+    }
+
     const musicTrack = document.getElementById("music-track");
     musicTrack.innerHTML = musics.map((m) => `
       <div class="music-card group relative shrink-0 w-[70%] sm:w-[45%] md:w-[31%] border border-white/15 bg-night/70 hover:border-accent transition-colors">
@@ -1436,10 +1466,15 @@
           <p class="font-en text-[10px] tracking-[.3em] text-accent mb-1">${m.type}</p>
           <p class="font-jp font-bold text-sm md:text-base leading-tight truncate">${m.title}</p>
           <p class="font-jp font-light text-[11px] text-white/50 truncate mt-1 mb-3">${m.artist}</p>
-          ${m.url
-            ? `<a href="${m.url}" target="_blank" rel="noopener"
-                  class="inline-flex items-center gap-2 font-en text-xs tracking-widest border border-accent text-accent px-3 py-1.5 hover:bg-accent hover:text-night transition-colors">▶ PLAY</a>`
-            : `<span class="inline-flex items-center gap-2 font-en text-xs tracking-widest border border-white/20 text-white/30 px-3 py-1.5">COMING SOON</span>`}
+          ${(() => {
+            if (!m.url) return `<span class="inline-flex items-center gap-2 font-en text-xs tracking-widest border border-white/20 text-white/30 px-3 py-1.5">COMING SOON</span>`;
+            const vid = ytVideoId(m.url);
+            return vid
+              ? `<button class="mv-play inline-flex items-center gap-2 font-en text-xs tracking-widest border border-accent text-accent px-3 py-1.5 hover:bg-accent hover:text-night transition-colors"
+                    data-video="${vid}" data-title="${m.title}" data-url="${m.url}">▶ PLAY</button>`
+              : `<a href="${m.url}" target="_blank" rel="noopener"
+                    class="inline-flex items-center gap-2 font-en text-xs tracking-widest border border-accent text-accent px-3 py-1.5 hover:bg-accent hover:text-night transition-colors">▶ PLAY</a>`;
+          })()}
         </div>
       </div>
     `).join("");
@@ -1453,6 +1488,30 @@
       const i = Math.round(musicTrack.scrollLeft / musicCardWidth());
       document.getElementById("music-cur").textContent = String(Math.min(i + 1, musics.length)).padStart(2, "0");
     }, { passive: true });
+
+    /* ---------- MVモーダル: サイト内でMVを再生（youtube-nocookie埋め込み） ---------- */
+    const mvModal = document.getElementById("mv-modal");
+    const mvFrame = document.getElementById("mv-frame");
+    const mvCaption = document.getElementById("mv-caption");
+    const mvExternal = document.getElementById("mv-external");
+
+    function openMv(videoId, title, url) {
+      mvFrame.src = "https://www.youtube-nocookie.com/embed/" + videoId + "?autoplay=1&rel=0&playsinline=1";
+      mvCaption.textContent = title;
+      mvExternal.href = url;
+      mvModal.classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+    }
+    function closeMv() {
+      mvFrame.src = "";  /* srcを空にして再生を確実に停止 */
+      mvModal.classList.add("hidden");
+      document.body.style.overflow = "";
+    }
+    document.querySelectorAll(".mv-play").forEach((btn) => {
+      btn.addEventListener("click", () => openMv(btn.dataset.video, btn.dataset.title, btn.dataset.url));
+    });
+    mvModal.addEventListener("click", (e) => { if (e.target === mvModal) closeMv(); });
+    document.getElementById("mv-close").addEventListener("click", closeMv);
 
     /* ---------- novel data（四季アーク。表紙とURLが揃った季節から点灯） ---------- */
     const novels = [
@@ -1657,6 +1716,10 @@
     }, { threshold: 0.3 }).observe(document.getElementById("character"));
 
     window.addEventListener("keydown", (e) => {
+      if (!mvModal.classList.contains("hidden")) {
+        if (e.key === "Escape") closeMv();
+        return;
+      }
       if (!lightbox.classList.contains("hidden")) {
         if (e.key === "Escape") closeLightbox();
         if (e.key === "ArrowLeft") openLightbox(stillIndex - 1);
