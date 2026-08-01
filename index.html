@@ -8,12 +8,14 @@
   <meta property="og:title" content="ボイスコネクトメモリアル 公式ポータルサイト">
   <meta property="og:description" content="声が魔法になる世界で――。絶望と再生の現代ダークファンタジー『ボイスコネクトメモリアル』公式プロジェクトサイト。">
   <meta property="og:url" content="https://kuyavoice.github.io/voice-connect-memorial/">
-  <meta property="og:image" content="https://kuyavoice.github.io/voice-connect-memorial/ogp.png">
+  <meta property="og:image" content="https://kuyavoice.github.io/voice-connect-memorial/ogp.jpg">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://kuyavoice.github.io/voice-connect-memorial/ogp.png">
+  <meta name="twitter:image" content="https://kuyavoice.github.io/voice-connect-memorial/ogp.jpg">
   <link rel="canonical" href="https://kuyavoice.github.io/voice-connect-memorial/">
   <meta name="theme-color" content="#060913">
+  <!-- イントロのキービジュアルを先読みして、二人の出現を確実に一瞬で -->
+  <link rel="preload" as="image" href="hero_duo.webp">
 
   <!-- 構造化データ（検索エンジン向け） -->
   <script type="application/ld+json">
@@ -634,6 +636,12 @@
                   <span class="text-lg leading-none">▶</span>
                   <span id="voice-btn-label">VOICE 1</span>
                 </button>
+
+                <!-- character song（キャラソン持ちのみ表示・クリックでMVモーダル再生） -->
+                <button id="char-song" style="display:none"
+                        class="voice-btn font-jp tracking-wider text-xs px-5 py-2.5 items-center gap-2 clip-tag mt-3">
+                  <span id="char-song-label">♪</span>
+                </button>
               </div>
             </div>
           </div>
@@ -847,6 +855,7 @@
         cv: "言峰 空也",
         catchphrase: "さぁ、君の声を響かせよう",
         color_theme: "#00BFFF",
+        song: { title: "Shattered Skies 【Side: Sky】", url: "https://youtu.be/E3VK3FY9aRU" },
         normal: {
           image: "kuya_normal.webp",
           text: "かつて何者にもなれず燻っていた青年。仲間との出会いを経て「誰も失わないための力」を求め、指揮官の道を選ぶ。戦場の全てを“音楽”として聴き、仲間の力を一つに束ねる才の持ち主。優しすぎるほどの心を抱えながら、その白いコートに、皆の想いと責任を背負って前へ進む。",
@@ -864,6 +873,7 @@
         cv: "雪狐",
         catchphrase: "僕が、道を斬り拓きます",
         color_theme: "#C0C0C0",
+        song: { title: "白銀の残響 【Side: Snow】", url: "https://youtu.be/qPkyC4R_FMs" },
         normal: {
           image: "yukihito_normal.webp",
           text: "大剣を振るう、物腰穏やかな剣士。空夜の戦術を誰よりも信じ、その“剣”となって敵陣を切り開く切り込み隊長。「時間を作る剣」を旨とし、味方を守るために最前線に立つ。丁寧な言葉遣いと生真面目さの奥に、仲間への揺るがぬ忠義と――キッチンでだけ顔を出す、お茶目な一面を秘めている。",
@@ -1068,6 +1078,7 @@
         cv: "猫宮 レイン",
         catchphrase: "あの夜すれ違った空に、導かれた雪",
         color_theme: "#708090",
+        song: { title: "レイニーキャット・グルーヴ", url: "https://www.youtube.com/watch?v=1OvzyPwushI" },
         normal: {
           image: "rei_normal.webp",
           text: "舞うようにアーツを操る、天宮流の継承者。かつては別のかたちでこの世界にいた、少し不思議な出自を持つ。人の心の機微に敏く、そっと寄り添う優しさを持つ。誰かの色褪せた世界に、もう一度あたたかな色を取り戻す――そんな役割を、静かに担っていく。",
@@ -1255,6 +1266,8 @@
       current:    document.getElementById("char-current"),
       total:      document.getElementById("char-total"),
       share:      document.getElementById("char-share"),
+      songBtn:    document.getElementById("char-song"),
+      songLabel:  document.getElementById("char-song-label"),
     };
 
     function renderCharacter() {
@@ -1303,6 +1316,14 @@
       el.total.textContent = String(characterData.length).padStart(2, "0");
       document.querySelectorAll(".char-jump").forEach((b, i) => b.classList.toggle("active", i === currentIndex));
 
+      /* キャラソン連携: songを持つキャラだけ「♪ 曲名」ボタンを表示（クリックでMVモーダル） */
+      if (c.song && ytVideoId(c.song.url)) {
+        el.songBtn.style.display = "inline-flex";
+        el.songLabel.textContent = "♪ " + c.song.title + " を聴く";
+      } else {
+        el.songBtn.style.display = "none";
+      }
+
       /* Xシェアリンク更新（このキャラを直接開けるディープリンク付き） */
       const shareUrl = "https://kuyavoice.github.io/voice-connect-memorial/#character-" + c.id;
       const shareText = "『ボイスコネクトメモリアル』 " + c.name + "（CV. " + c.cv + "）\n「" + c.catchphrase + "」";
@@ -1337,6 +1358,8 @@
         currentIndex = targetIndex;
         expression = "normal";
         renderCharacter();
+        /* 閲覧中キャラをURLに反映（コピーすればそのままディープリンクになる。履歴は汚さない） */
+        try { history.replaceState(null, "", "#character-" + characterData[currentIndex].id); } catch (e) {}
         el.stage.classList.remove("slash-out");
         el.stage.classList.add("slash-in");
         el.stage.addEventListener("animationend", function onIn() {
@@ -1352,6 +1375,12 @@
 
     document.getElementById("char-prev").addEventListener("click", () => changeCharacter(-1));
     document.getElementById("char-next").addEventListener("click", () => changeCharacter(1));
+
+    /* キャラソンボタン: 表示中キャラの曲をMVモーダルで再生 */
+    el.songBtn.addEventListener("click", () => {
+      const c = characterData[currentIndex];
+      if (c.song) openMv(ytVideoId(c.song.url), c.song.title, c.song.url);
+    });
 
     /* スマホ用スワイプヒント: タップでも切替できる */
     document.querySelectorAll(".char-edge-hint").forEach((h) => {
@@ -1592,16 +1621,25 @@
           <p class="font-jp font-bold text-base md:text-lg leading-tight">${s.title}</p>
           <p class="font-jp font-light text-xs text-white/50 mt-1 leading-relaxed">${s.desc}</p>
         </div>
-        ${s.url && s.url !== "#"
-          ? `<a href="${s.url}" target="_blank" rel="noopener"
-                class="clip-tag shrink-0 font-en tracking-widest text-xs px-4 py-2 border border-accent text-accent hover:bg-accent hover:text-night transition-colors">WATCH →</a>`
-          : `<button class="script-read clip-tag shrink-0 font-en tracking-widest text-xs px-4 py-2 border border-accent text-accent hover:bg-accent hover:text-night transition-colors"
-                data-id="${s.id}">READ →</button>`}
+        ${(() => {
+          if (!s.url || s.url === "#") return `<button class="script-read clip-tag shrink-0 font-en tracking-widest text-xs px-4 py-2 border border-accent text-accent hover:bg-accent hover:text-night transition-colors"
+                data-id="${s.id}">READ →</button>`;
+          const vid = ytVideoId(s.url);
+          return vid
+            ? `<button class="mv-play clip-tag shrink-0 font-en tracking-widest text-xs px-4 py-2 border border-accent text-accent hover:bg-accent hover:text-night transition-colors"
+                data-video="${vid}" data-title="${s.title}" data-url="${s.url}">WATCH →</button>`
+            : `<a href="${s.url}" target="_blank" rel="noopener"
+                class="clip-tag shrink-0 font-en tracking-widest text-xs px-4 py-2 border border-accent text-accent hover:bg-accent hover:text-night transition-colors">WATCH →</a>`;
+        })()}
       </div>
     `).join("");
 
     document.querySelectorAll(".script-read").forEach((btn) => {
       btn.addEventListener("click", () => console.log("open script" + btn.dataset.id));
+    });
+    /* SCRIPTのWATCHもMVモーダルで再生 */
+    document.querySelectorAll("#script-list .mv-play").forEach((btn) => {
+      btn.addEventListener("click", () => openMv(btn.dataset.video, btn.dataset.title, btn.dataset.url));
     });
 
     /* ---------- starfield ---------- */
