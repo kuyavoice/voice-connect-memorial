@@ -15,7 +15,7 @@ Firefly*
 *_serious.png
 
 # Novel表紙の元PNG（配信はnovel_*.webp。PNGはローカル保管の元データ）
-novel_cover*.png
+novel_*.png
 
 # Heroイントロ用キービジュアルの元PNG（配信はhero_duo.webp）
 hero_duo*.png

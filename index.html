@@ -1549,11 +1549,16 @@
         range: "第1話 — 第24話",
         summary: "音の記憶だけを頼りに生きてきた少女が、月夜の出会いで声の力に目覚める。すべての物語が始まる、過去編。",
         cover: "novel_spring.webp",
+        cta: "第1話から読む",
         url: "https://kakuyomu.jp/works/2912051602671195569/episodes/2912051602672487737"
       },
       {
         id: "02", part: "第二部", season: "約束の夏", en: "Summer of Promises",
-        range: "第25話 —", summary: "", cover: "", url: ""
+        range: "第25話 —",
+        summary: "春を越えて、物語は新章へ。学園に集う仲間たちとの賑やかな日々と、“約束”の季節が幕を開ける――。",
+        cover: "novel_summer.webp",
+        cta: "第25話から読む",
+        url: "https://kakuyomu.jp/works/2912051602671195569/episodes/2912051604332706789"
       },
       {
         id: "03", part: "第三部", season: "星降る秋", en: "Autumn of Bonds",
@@ -1582,7 +1587,7 @@
           <p class="font-jp font-light text-xs text-white/60 leading-relaxed mb-4 flex-1">${n.summary}</p>
           ${n.url
             ? `<a href="${n.url}" target="_blank" rel="noopener"
-                 class="clip-tag self-start font-en tracking-widest text-xs px-4 py-2 border border-accent text-accent hover:bg-accent hover:text-night transition-colors">第1話から読む →</a>`
+                 class="clip-tag self-start font-en tracking-widest text-xs px-4 py-2 border border-accent text-accent hover:bg-accent hover:text-night transition-colors">${n.cta || "読む"} →</a>`
             : `<span class="clip-tag self-start font-en tracking-widest text-xs px-4 py-2 border border-white/20 text-white/30">COMING SOON</span>`}
         </div>
       </article>
