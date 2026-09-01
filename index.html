@@ -616,12 +616,7 @@
               <div class="relative">
                 <p id="char-catch" class="font-jp font-bold text-accent tracking-widest text-sm md:text-base mb-2">もう一度、星を繋ぐために。</p>
                 <h3 id="char-name" class="font-jp font-black text-3xl md:text-4xl tracking-wide mb-1">宵月 空夜</h3>
-                <p class="font-en text-white/60 text-sm tracking-widest mb-6 flex items-center gap-3">
-                  <span>CV. <span id="char-cv" class="font-jp">言峰 空也</span></span>
-                  <!-- クラスバッジ（生徒のみ。教職員は非表示） -->
-                  <span id="char-role" style="display:none"
-                        class="clip-tag font-jp text-[10px] tracking-[.2em] px-2.5 py-1 bg-accent/10 border border-accent/50 text-accent"></span>
-                </p>
+                <p class="font-en text-white/60 text-sm tracking-widest mb-6">CV. <span id="char-cv" class="font-jp">言峰 空也</span></p>
 
                 <!-- expression toggle -->
                 <div class="flex font-en text-sm tracking-widest mb-5 border border-white/25 w-fit">
@@ -1273,18 +1268,6 @@
       share:      document.getElementById("char-share"),
       songBtn:    document.getElementById("char-song"),
       songLabel:  document.getElementById("char-song-label"),
-      roleBadge:  document.getElementById("char-role"),
-    };
-
-    /* クラス割り当て（生徒のみ。教職員20〜23はバッジ無し。所属変更はここを編集） */
-    const characterRoles = [
-      { label: "キャスト",   ids: ["02", "04", "05", "06", "07", "08", "14", "15"] },
-      { label: "ライター",   ids: ["03", "16", "17"] },
-      { label: "サポーター", ids: ["01", "09", "10", "11", "12", "13", "18", "19"] },
-    ];
-    const roleOf = (id) => {
-      const r = characterRoles.find((g) => g.ids.includes(id));
-      return r ? r.label : null;
     };
 
     function renderCharacter() {
@@ -1332,11 +1315,6 @@
       el.current.textContent = c.id;
       el.total.textContent = String(characterData.length).padStart(2, "0");
       document.querySelectorAll(".char-jump").forEach((b) => b.classList.toggle("active", Number(b.dataset.i) === currentIndex));
-
-      /* クラスバッジ（キャスト/ライター/サポーター）。教職員などクラス無しは非表示 */
-      const role = roleOf(c.id);
-      el.roleBadge.style.display = role ? "inline-flex" : "none";
-      if (role) el.roleBadge.textContent = role;
 
       /* キャラソン連携: songを持つキャラだけ「♪ 曲名」ボタンを表示（クリックでMVモーダル） */
       if (c.song && ytVideoId(c.song.url)) {
