@@ -639,11 +639,8 @@
                   <span id="voice-btn-label">VOICE 1</span>
                 </button>
 
-                <!-- character song（キャラソン持ちのみ表示・クリックでMVモーダル再生） -->
-                <button id="char-song" style="display:none"
-                        class="voice-btn font-jp tracking-wider text-xs px-5 py-2.5 items-center gap-2 clip-tag mt-3">
-                  <span id="char-song-label">♪</span>
-                </button>
+                <!-- character song（キャラソン持ちのみ表示・クリックでMVモーダル再生。複数曲はボタンが並ぶ） -->
+                <div id="char-songs" class="flex flex-wrap gap-2 mt-3"></div>
               </div>
             </div>
           </div>
@@ -958,6 +955,10 @@
         cv: "瑞浪 蓮",
         catchphrase: "私の声が、誰かの支えになれるのなら――",
         color_theme: "#87CEFA",
+        songs: [
+          { title: "蒼のメロディー", url: "https://youtu.be/TRTXt_4OmiQ" },
+          { title: "怜水閃 Clear Sky", url: "https://youtu.be/T9weX02q6-E" }
+        ],
         normal: {
           image: "mizuho_normal.webp",
           text: "声の記憶だけを頼りに生きてきた、不思議な耳を持つ少女。精霊ルナと出会い、水を操るアーツに目覚める。臆病だった自分を越えて「大切な人の隣に立ちたい」と願い、戦う力と癒す力の両方を選び取っていく。ひたむきで優しく、その真っ直ぐさが、いつしか周りの人々の心を繋いでいく。",
@@ -975,6 +976,7 @@
         cv: "雛桜 律",
         catchphrase: "声には、世界を変える力があるの。まるで魔法みたいだよね",
         color_theme: "#FF69B4",
+        song: { title: "マカロン・マジック！", url: "https://youtu.be/oZbCrHeESig" },
         normal: {
           image: "ritsuka_normal.webp",
           text: "太陽のように明るい、炎のアーツの使い手。「清く優しい言葉は人を勇気づける」と信じ、皆の“お守り”になれる魔女を目指す。「愛がなければ視えない」を胸に、絶望を希望に変える笑顔で仲間を照らす。瑞穂の一番の親友。その眩しさの裏に、大切な人を繋ぎ止めていたいという、切実な愛情を抱いている。",
@@ -992,6 +994,7 @@
         cv: "晴樹",
         catchphrase: "面白いじゃん、受けて立とうじゃないの！",
         color_theme: "#FF8C00",
+        song: { title: "最強コンテニュー！", url: "https://youtu.be/FXrCbpcx0g8" },
         normal: {
           image: "itsuki_normal.webp",
           text: "クソゲー攻略歴十二年を誇る、オレンジ色の旋風のような編入生。理不尽を根性で越えてきた執念が、現実の“仕様の穴”を突くアーツ『BV』となった。当たり判定を誤魔化し、ありえない軌道で戦場を駆ける。誰よりも諦めが悪く、誰よりも仲間思い。基準がいつもご飯（それも激辛）なのはご愛嬌。眼鏡への愛は、語らせると長い。",
@@ -1009,6 +1012,7 @@
         cv: "森野 ベアー",
         catchphrase: "本当の強さは、その“意志”だ",
         color_theme: "#8B4513",
+        song: { title: "SUPER WILD", url: "https://youtu.be/6nxCNDYN8-Q" },
         normal: {
           image: "gou_normal.webp",
           text: "学園最強と名高い、土のアーツを操る豪傑。岩の防壁は絶対の盾となり、その拳は戦場を制する。豪快で面倒見がよく、後輩には惜しみなく技を授ける兄貴分。圧倒的な力の持ち主だからこそ、「制御できない力は、ただの暴力だ」という言葉の重みを、誰よりも知っている。",
@@ -1026,6 +1030,7 @@
         cv: "an-nzu",
         catchphrase: "この胸を焦がす衝動は　罪なのでしょうか",
         color_theme: "#DC143C",
+        song: { title: "籠中独白", url: "https://youtu.be/bV-LxqzRRZs" },
         normal: {
           image: "kyoko_normal.webp",
           text: "名家に生まれ、“籠の中の鳥”として育った、和装の似合う剣士。護乃豪に匹敵すると噂される実力者。感情を抑えて生きてきたが、学園では素の姉御肌が顔を出す。芝居と刀を振るうことだけは心から愛している。抑え込んだ自分を解き放つこと――それが、彼女の密かな願い。戦場でこぼれる素の「楽しい」は、その解放の、最初の一滴なのかもしれない。",
@@ -1043,6 +1048,7 @@
         cv: "今仁 いたる",
         catchphrase: "あのねBLは、生き様なのよぉぉぉ！",
         color_theme: "#4169E1",
+        song: { title: "世界は一冊の薄い本", url: "https://youtu.be/3ISm376x6pw" },
         normal: {
           image: "itaru_normal.webp",
           text: "ペンタブに描いたものを実体化させる“創造”のアーツを操る、天才肌のサポーター。囮も足場も罠も生み出す変幻自在の後方支援役で、その観察眼は戦況を鋭く読む。明るく物怖じしないムードメーカーで、瑞穂や律花を導く姉貴分（BL愛好会「センシティ部」の主要メンバーでもある）。カラッとした快活さの裏に、ふと孤独を抱くことも。「リアルは少しだけ寂しいから」――だからこそ、最高のハッピーエンドを描き続ける。",
@@ -1060,6 +1066,7 @@
         cv: "ベルナックル",
         catchphrase: "なんとかなるって。とりあえずご飯食べるかい？",
         color_theme: "#228B22",
+        song: { title: "この食卓が約束の場所", url: "https://youtu.be/Y1jGzbyolMs" },
         normal: {
           image: "kenshirou_normal.webp",
           text: "中華料理店『衛宮亭』の料理人にして、飄々とした味の救世主。「どんな人間も、美味いもん食えば機嫌よくなる」を信条に、その料理と声で人の心をほぐしていく。争いよりも一杯の丼で場を収める、変わり種の実力者。その腕と人柄は、やがて戦場でも誰かの魂を救うことになる。",
@@ -1077,6 +1084,7 @@
         cv: "シャカ助（フリスク）",
         catchphrase: "なんや、おもろそうやん！",
         color_theme: "#00CED1",
+        song: { title: "SHARPENS YOU UP!", url: "https://youtu.be/VEQmF3HMCEU" },
         normal: {
           image: "hibiki_normal.webp",
           text: "関西弁で場を沸かせる、陽気なムードメーカー。愛用のフリスクケースに声を込めて撃ち出す“リフレッシュの弾丸”の使い手で、当たれば敵は吹き飛び、味方は気分爽快。「戦いは笑うて勝つのが一番」がモットー。手放さないその小さなケースには、彼だけの大切な理由がある。",
@@ -1094,6 +1102,7 @@
         cv: "せいた",
         catchphrase: "アーツ？　知ったことか。これはただの『勘』だ",
         color_theme: "#556B2F",
+        song: { title: "Route Finder", url: "https://youtu.be/drL7-AWHtDc" },
         normal: {
           image: "soma_normal.webp",
           text: "どんな危険地帯でも荷物を届けてきた、腕利きの元“運び屋”。最も安全で速い道が直感的に“視える”「経路最適化」の使い手で、学園の専属輸送員にして、生徒たちを人の悪意から守る一員。徹底した現実主義者だが、一度受けた“仕事”は割に合わずとも最後までやり遂げる、義理堅いプロ。日本の飯とガンプラをこよなく愛する。",
@@ -1111,6 +1120,7 @@
         cv: "HONEY",
         catchphrase: "宝石も、人も。磨けば、光るのよ",
         color_theme: "#FFD700",
+        song: { title: "JUDGMENT EYE", url: "https://youtu.be/4nN5tEK5MPU" },
         normal: {
           image: "mirei_normal.webp",
           text: "宝石商にして、月景の共同研究者。物や人に宿る“原石”の輝きを見抜く審美眼を持ち、優しく背中を押す姉のような存在。空夜の白きコートを見立てたのも彼女。その眼差しには、遠くの誰かを想うような、ほんの少しの寂しさが宿ることがある。",
@@ -1146,6 +1156,7 @@
         cv: "テトミヤ",
         catchphrase: "そういう事なら、みゃーこに任せてね！",
         color_theme: "#D2B48C",
+        song: { title: "First Runner's Beat", url: "https://youtu.be/JRTWOZhgYco" },
         normal: {
           image: "miyako_normal.webp",
           text: "動物耳のパーカーがトレードマークの、小動物のように愛らしい斥候。脚力と五感を極限まで強化し、シーフのごとき一撃離脱で戦場を駆ける。ネミノクスの気配をいち早く察知する索敵は無類。元は配信アプリ「ボイスコネクトネクスト」の人気役者で、その声のアーツを見出されスカウトされた。明るく人懐っこく、誰とでもすぐ打ち解ける、チームの“目”。",
@@ -1163,6 +1174,7 @@
         cv: "片桐",
         catchphrase: "顕現せよ――我が物語",
         color_theme: "#2F4F4F",
+        song: { title: "顕現せよ我が物語", url: "https://youtu.be/KQ4A00VgxrA" },
         normal: {
           image: "kurodo_normal.webp",
           text: "物語をこよなく愛する、渋く重厚な声を持つライター／キャスト。彼の書く台本は、詠唱すれば物語の一場面を現実に具現化させる“魔導書”となり、学園でも絶大な人気を誇る。物静かなインテリだが、一度夢中になると抜けている天然な一面も。「傍観者でいたかった」少年は、自らの声が世界を動かすと知り、今度は誰かの“盾”になることを選ぶ。",
@@ -1180,6 +1192,7 @@
         cv: "大里 悠",
         catchphrase: "やあ、君は静かで落ち着くね",
         color_theme: "#8A2BE2",
+        song: { title: "静寂のレゾナンス", url: "https://youtu.be/9IZTCrU6Uus" },
         normal: {
           image: "yuri_normal.webp",
           text: "紫の髪と中性的な佇まいを持つ、物静かなライター／キャスト。瞬間を切り取る“詩”に強大なアーツを込め、聞く者の心に直接作用させる。他者の声を借りる巧みな声真似は、感情を抑圧されて育った彼が、自分を表現するために身につけたもの。ネミノクスに“声”を奪われた幼馴染を救う――その一心で、彼は自らの言葉と声を磨き続けている。",
@@ -1197,6 +1210,7 @@
         cv: "女狐 リラ",
         catchphrase: "んふふ…来ちゃった、そんな訳でみんなよろしくね！",
         color_theme: "#FFB6C1",
+        song: { title: "神様！ぜんりょくエール！", url: "https://youtu.be/WcspzHUGQmk" },
         normal: {
           image: "tamamo_normal.webp",
           text: "狐の耳と尻尾を持つ、さびれた神社からやってきた小さなお狐様。「〜なのじゃ」と偉そうにふるまうが、根は素直で寂しがりのツンデレ。信頼や期待を“信仰心”として集め、仲間に絶大なバフを与えるサポーター。忘れられかけていた自分を見つけ、真摯に祈りを捧げてくれた一人の青年のおかげで、人の姿を得た。今日も「もっと信仰を集めるのじゃ！」とVTuberデビューを目論んでいる。",
@@ -1214,6 +1228,7 @@
         cv: "惺月",
         catchphrase: "……どうぞ。あなたに、必要な味です",
         color_theme: "#F0E68C",
+        song: { title: "月光のレシピ", url: "https://youtu.be/_iO-fhgY44s" },
         normal: {
           image: "ame_normal.webp",
           text: "ゴシックドレスを纏った、お人形のようにミステリアスな少女。アーツを込めた洋菓子で人の心を癒す“アーツパティシエール”で、食べた者は精神が安定し、勇気や冷静さを得る。月光をイメージしたチーズケーキが得意。感情の起伏は少ないが、人の心の機微に敏く、相手が本当に求めているものを察する。戦いは大の苦手。誰かの危うい心を、そっと見守っている。",
@@ -1231,6 +1246,7 @@
         cv: "？？？",
         catchphrase: "二度と、過ちは繰り返させん",
         color_theme: "#1C1C1C",
+        song: { title: "伴奏者 ―ACCOMPANIST―", url: "https://youtu.be/JulwBF77Jmw" },
         normal: {
           image: "seishirou_normal.webp",
           text: "生徒たちを鍛え上げる、鋼の意志を持つ教官。厳しさの奥には、教え子を誰よりも案じる深い愛情がある。公の場では“私”と名乗り、素の顔は決して見せない。その厳格さの根に何があるのか――彼自身の過去を知る者は、まだ少ない。",
@@ -1248,6 +1264,7 @@
         cv: "？？？",
         catchphrase: "あー、だるい。……でも、面白いわね、あなた",
         color_theme: "#191970",
+        song: { title: "午前三時の処方箋", url: "https://youtu.be/JhSJAtN4W_U" },
         normal: {
           image: "sari_normal.webp",
           text: "ネミノクスに奪われた声を治す“チューナー”にして、声療班の統括責任者。気だるげで面倒くさがりだが、魂の波長を聴き取る『魂の聴診』は学園随一。ぶっきらぼうな言葉の裏に、確かな師の情を隠している。その金色の瞳は、誰よりも深く、人の“本当”を見抜く。",
@@ -1265,6 +1282,7 @@
         cv: "スナイパー",
         catchphrase: "彼らの助けとなる。それが、私の役目です",
         color_theme: "#008080",
+        song: { title: "Sound Sniper", url: "https://youtu.be/tQ4GdGBXKUM" },
         normal: {
           image: "ryo_normal.webp",
           text: "学園の技術開発を一手に担う天才エンジニア。世界の全てを“音”として知覚する超感覚の持ち主で、コネクト・ギアの生みの親。かつてノイズに満ちた世界に苦しんだ彼は、混沌の中から意味ある信号を見出すことに救いを求めた。生徒たちの命という、最も純粋な“シグナル”を守り抜く。",
@@ -1316,8 +1334,7 @@
       current:    document.getElementById("char-current"),
       total:      document.getElementById("char-total"),
       share:      document.getElementById("char-share"),
-      songBtn:    document.getElementById("char-song"),
-      songLabel:  document.getElementById("char-song-label"),
+      songs:      document.getElementById("char-songs"),
     };
 
     function renderCharacter() {
@@ -1366,13 +1383,12 @@
       el.total.textContent = String(characterData.length).padStart(2, "0");
       document.querySelectorAll(".char-jump").forEach((b) => b.classList.toggle("active", Number(b.dataset.i) === currentIndex));
 
-      /* キャラソン連携: songを持つキャラだけ「♪ 曲名」ボタンを表示（クリックでMVモーダル） */
-      if (c.song && ytVideoId(c.song.url)) {
-        el.songBtn.style.display = "inline-flex";
-        el.songLabel.textContent = "♪ " + c.song.title + " を聴く";
-      } else {
-        el.songBtn.style.display = "none";
-      }
+      /* キャラソン連携: song（1曲）または songs（複数曲）を持つキャラに「♪ 曲名」ボタンを表示（クリックでMVモーダル） */
+      const songList = Array.isArray(c.songs) ? c.songs : (c.song ? [c.song] : []);
+      el.songs.innerHTML = songList.filter((s) => ytVideoId(s.url)).map((s) =>
+        `<button class="char-song voice-btn font-jp tracking-wider text-xs px-5 py-2.5 inline-flex items-center gap-2 clip-tag"
+                 data-video="${ytVideoId(s.url)}" data-title="${s.title}" data-url="${s.url}">♪ ${s.title} を聴く</button>`
+      ).join("");
 
       /* Xシェアリンク更新（このキャラを直接開けるディープリンク付き） */
       const shareUrl = "https://kuyavoice.github.io/voice-connect-memorial/#character-" + c.id;
@@ -1426,10 +1442,10 @@
     document.getElementById("char-prev").addEventListener("click", () => changeCharacter(-1));
     document.getElementById("char-next").addEventListener("click", () => changeCharacter(1));
 
-    /* キャラソンボタン: 表示中キャラの曲をMVモーダルで再生 */
-    el.songBtn.addEventListener("click", () => {
-      const c = characterData[currentIndex];
-      if (c.song) openMv(ytVideoId(c.song.url), c.song.title, c.song.url);
+    /* キャラソンボタン: 表示中キャラの曲をMVモーダルで再生（ボタンは切替毎に生成されるので委譲で受ける） */
+    el.songs.addEventListener("click", (e) => {
+      const btn = e.target.closest(".char-song");
+      if (btn) openMv(btn.dataset.video, btn.dataset.title, btn.dataset.url);
     });
 
     /* スマホ用スワイプヒント: タップでも切替できる */
@@ -1524,7 +1540,28 @@
         jacket: "jacket_03.png",
         audio_url: "dummy_m3.mp3",
         url: "https://youtu.be/1OvzyPwushI"
-      }
+      },
+      /* 04〜22: 公式プレイリスト【ボイメモキャラソン】から公開順に追加（2026-10-22）。
+         jacket が空の曲はYouTubeサムネイルを暫定表示 → jacket_NN.png を置いて jacket に指定すれば差し替わる */
+      { id: "04", type: "CHARACTER SONG", title: "最強コンテニュー！", artist: "Vo. 晴山樹（CV. 晴樹）", jacket: "", audio_url: "dummy_m4.mp3", url: "https://youtu.be/FXrCbpcx0g8" },
+      { id: "05", type: "CHARACTER SONG", title: "この食卓が約束の場所", artist: "Vo. 鈴鳴拳士郎（CV. ベルナックル）", jacket: "", audio_url: "dummy_m5.mp3", url: "https://youtu.be/Y1jGzbyolMs" },
+      { id: "06", type: "CHARACTER SONG", title: "籠中独白", artist: "Vo. 嘉地杏子（CV. an-nzu）", jacket: "", audio_url: "dummy_m6.mp3", url: "https://youtu.be/bV-LxqzRRZs" },
+      { id: "07", type: "CHARACTER SONG", title: "Sound Sniper", artist: "Vo. 月景遼（CV. スナイパー）", jacket: "", audio_url: "dummy_m7.mp3", url: "https://youtu.be/tQ4GdGBXKUM" },
+      { id: "08", type: "CHARACTER SONG", title: "月光のレシピ", artist: "Vo. 月惺あめ（CV. 惺月）", jacket: "", audio_url: "dummy_m8.mp3", url: "https://youtu.be/_iO-fhgY44s" },
+      { id: "09", type: "CHARACTER SONG", title: "マカロン・マジック！", artist: "Vo. 寿律花（CV. 雛桜 律）", jacket: "", audio_url: "dummy_m9.mp3", url: "https://youtu.be/oZbCrHeESig" },
+      { id: "10", type: "CHARACTER SONG", title: "静寂のレゾナンス", artist: "Vo. 音染悠理（CV. 大里 悠）", jacket: "", audio_url: "dummy_m10.mp3", url: "https://youtu.be/9IZTCrU6Uus" },
+      { id: "11", type: "CHARACTER SONG", title: "顕現せよ我が物語", artist: "Vo. 片桐玄人（CV. 片桐）", jacket: "", audio_url: "dummy_m11.mp3", url: "https://youtu.be/KQ4A00VgxrA" },
+      { id: "12", type: "CHARACTER SONG", title: "蒼のメロディー", artist: "Vo. 月怜瑞穂（CV. 瑞浪 蓮）", jacket: "", audio_url: "dummy_m12.mp3", url: "https://youtu.be/TRTXt_4OmiQ" },
+      { id: "13", type: "CHARACTER SONG", title: "SUPER WILD", artist: "Vo. 護乃豪（CV. 森野 ベアー）", jacket: "", audio_url: "dummy_m13.mp3", url: "https://youtu.be/6nxCNDYN8-Q" },
+      { id: "14", type: "CHARACTER SONG", title: "SHARPENS YOU UP!", artist: "Vo. 振須響（CV. シャカ助（フリスク））", jacket: "", audio_url: "dummy_m14.mp3", url: "https://youtu.be/VEQmF3HMCEU" },
+      { id: "15", type: "CHARACTER SONG", title: "JUDGMENT EYE", artist: "Vo. 蜂城美麗（CV. HONEY）", jacket: "", audio_url: "dummy_m15.mp3", url: "https://youtu.be/4nN5tEK5MPU" },
+      { id: "16", type: "CHARACTER SONG", title: "Route Finder", artist: "Vo. 瀬田奏真（CV. せいた）", jacket: "", audio_url: "dummy_m16.mp3", url: "https://youtu.be/drL7-AWHtDc" },
+      { id: "17", type: "CHARACTER SONG", title: "First Runner's Beat", artist: "Vo. 孤ヶ爪ミヤコ（CV. テトミヤ）", jacket: "", audio_url: "dummy_m17.mp3", url: "https://youtu.be/JRTWOZhgYco" },
+      { id: "18", type: "CHARACTER SONG", title: "世界は一冊の薄い本", artist: "Vo. 弼辺徹（CV. 今仁 いたる）", jacket: "", audio_url: "dummy_m18.mp3", url: "https://youtu.be/3ISm376x6pw" },
+      { id: "19", type: "CHARACTER SONG", title: "神様！ぜんりょくエール！", artist: "Vo. 呱々崎璦萌（CV. 女狐 リラ）", jacket: "", audio_url: "dummy_m19.mp3", url: "https://youtu.be/WcspzHUGQmk" },
+      { id: "20", type: "CHARACTER SONG", title: "伴奏者 ―ACCOMPANIST―", artist: "Vo. 若宮征士郎（CV. ？？？）", jacket: "", audio_url: "dummy_m20.mp3", url: "https://youtu.be/JulwBF77Jmw" },
+      { id: "21", type: "CHARACTER SONG", title: "怜水閃 Clear Sky", artist: "Vo. 月怜瑞穂（CV. 瑞浪 蓮）", jacket: "", audio_url: "dummy_m21.mp3", url: "https://youtu.be/T9weX02q6-E" },
+      { id: "22", type: "CHARACTER SONG", title: "午前三時の処方箋", artist: "Vo. 一色紗理（CV. ？？？）", jacket: "", audio_url: "dummy_m22.mp3", url: "https://youtu.be/JhSJAtN4W_U" }
     ];
 
     /* YouTube URLから動画IDを取り出す（youtu.be/ID・watch?v=ID 両対応） */
@@ -1533,12 +1570,31 @@
       return m ? m[1] : null;
     }
 
+    /* ジャケット未設定の曲はYouTubeサムネを暫定表示（高解像度版が無い動画は中解像度へ自動フォールバック） */
+    function ytThumbFallback(img) {
+      if (img.src.includes("maxresdefault")) img.src = img.src.replace("maxresdefault", "mqdefault");
+      else img.style.opacity = 0;
+    }
+    /* 高解像度版が無い動画にはYouTubeが120x90のダミー画像を返す（画像として描画されonerrorが出ない）ため、サイズで判定 */
+    function ytThumbCheck(img) {
+      if (img.src.includes("maxresdefault") && img.naturalWidth < 300) ytThumbFallback(img);
+    }
+    function jacketHtml(m) {
+      if (m.jacket) return `<img src="${m.jacket}" alt="${m.title} ジャケット" class="jacket-img absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async" onerror="this.style.opacity=0">`;
+      const vid = ytVideoId(m.url);
+      if (!vid) return "";
+      const thumb = `https://i.ytimg.com/vi/${vid}/maxresdefault.jpg`;
+      /* 16:9のサムネを正方形に収めるため、ぼかしたサムネを背景に敷いて全体表示 */
+      return `<img src="${thumb}" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover scale-125 blur-xl opacity-60" loading="lazy" decoding="async" onload="ytThumbCheck(this)" onerror="ytThumbFallback(this)">
+          <img src="${thumb}" alt="${m.title} MVサムネイル" class="jacket-img absolute inset-0 w-full h-full object-contain" loading="lazy" decoding="async" onload="ytThumbCheck(this)" onerror="ytThumbFallback(this)">`;
+    }
+
     const musicTrack = document.getElementById("music-track");
     musicTrack.innerHTML = musics.map((m) => `
       <div class="music-card group relative shrink-0 w-[70%] sm:w-[45%] md:w-[31%] border border-white/15 bg-night/70 hover:border-accent transition-colors">
         <div class="relative aspect-square bg-deepblue/50 overflow-hidden">
           <span class="absolute inset-0 flex items-center justify-center font-en text-[10px] tracking-[.3em] text-white/40 pointer-events-none">JACKET</span>
-          ${m.jacket ? `<img src="${m.jacket}" alt="${m.title} ジャケット" class="jacket-img absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async" onerror="this.style.opacity=0">` : ""}
+          ${jacketHtml(m)}
           <span class="clip-tag absolute top-0 left-0 bg-accent text-night font-en font-bold text-xs px-3 py-1 tracking-widest">${m.id}</span>
         </div>
         <div class="p-3 md:p-4">
