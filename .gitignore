@@ -17,5 +17,9 @@ Firefly*
 # Novel表紙の元PNG（配信はnovel_*.webp。PNGはローカル保管の元データ）
 novel_*.png
 
+# ギャラリースチル・楽曲ジャケットの元PNG（配信はstill_*.webp / jacket_*.webp）
+still_*.png
+jacket_*.png
+
 # Heroイントロ用キービジュアルの元PNG（配信はhero_duo.webp）
 hero_duo*.png
