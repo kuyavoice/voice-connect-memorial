@@ -48,6 +48,7 @@
   <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><polygon points="0,0 64,0 50,64 0,64" fill="%2387CEEB"/><text x="28" y="45" font-family="Arial,sans-serif" font-weight="bold" font-size="30" text-anchor="middle" fill="%23060913">VC</text></svg>'>
 
   <!-- Google Fonts -->
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
@@ -501,14 +502,14 @@
         <img src="logo_dummy.png" alt="ボイスコネクトメモリアル ロゴ" class="absolute inset-0 w-full h-full object-contain"
              onerror="this.style.display='none'">
         <!-- タイポグラフィ版ロゴ（logo_dummy.png が配置されたら画像が上に被さる） -->
-        <div class="absolute inset-0 flex flex-col items-center justify-center select-none">
-          <p class="relative font-en font-bold italic text-4xl md:text-6xl leading-none tracking-tight">
+        <h1 class="absolute inset-0 flex flex-col items-center justify-center select-none">
+          <span class="relative block font-en font-bold italic text-4xl md:text-6xl leading-none tracking-tight">
             VOICE&nbsp;<span class="text-accent">CONNECT</span>
-          </p>
-          <p class="relative font-en font-semibold text-2xl md:text-4xl tracking-[.5em] md:tracking-[.55em] leading-none mt-2 -mr-[.5em]">MEMORIAL</p>
-          <span class="relative block w-24 md:w-32 h-[3px] bg-accent mt-4 -skew-x-12"></span>
-          <p class="relative font-jp font-light text-[10px] md:text-xs tracking-[.45em] text-white/60 mt-3 -mr-[.45em]">ボイスコネクトメモリアル</p>
-        </div>
+          </span>
+          <span class="relative block font-en font-semibold text-2xl md:text-4xl tracking-[.5em] md:tracking-[.55em] leading-none mt-2 -mr-[.5em]">MEMORIAL</span>
+          <span class="relative block w-24 md:w-32 h-[3px] bg-accent mt-4 -skew-x-12" aria-hidden="true"></span>
+          <span class="relative block font-jp font-light text-[10px] md:text-xs tracking-[.45em] text-white/60 mt-3 -mr-[.45em]">ボイスコネクトメモリアル</span>
+        </h1>
       </div>
 
       <!-- catchphrase -->
@@ -858,7 +859,7 @@
   <!-- ================================================================
        GALLERY LIGHTBOX
   ================================================================= -->
-  <div id="lightbox" class="hidden fixed inset-0 z-[95] bg-night/95 flex items-center justify-center p-4 md:p-12">
+  <div id="lightbox" role="dialog" aria-modal="true" aria-label="イベントスチルの拡大表示" class="hidden fixed inset-0 z-[95] bg-night/95 flex items-center justify-center p-4 md:p-12">
     <img id="lightbox-img" src="" alt="" class="max-w-full max-h-[82svh] object-contain">
     <p id="lightbox-caption" class="absolute bottom-16 left-1/2 -translate-x-1/2 font-en text-xs tracking-[.3em] text-white/60"></p>
     <button id="lightbox-close" aria-label="閉じる"
@@ -872,7 +873,7 @@
   <!-- ================================================================
        MV MODAL（MUSICのサイト内再生）
   ================================================================= -->
-  <div id="mv-modal" class="hidden fixed inset-0 z-[95] bg-night/95 flex items-center justify-center p-4 md:p-12">
+  <div id="mv-modal" role="dialog" aria-modal="true" aria-label="動画の再生" class="hidden fixed inset-0 z-[95] bg-night/95 flex items-center justify-center p-4 md:p-12">
     <div class="w-full max-w-4xl">
       <div class="mv-player relative aspect-video bg-black border border-white/15">
         <iframe id="mv-frame" class="absolute inset-0 w-full h-full" src="" title="ミュージックビデオ再生"
@@ -1622,7 +1623,9 @@
     document.getElementById("music-prev").addEventListener("click", () => musicTrack.scrollBy({ left: -musicCardWidth(), behavior: "smooth" }));
     document.getElementById("music-next").addEventListener("click", () => musicTrack.scrollBy({ left: musicCardWidth(), behavior: "smooth" }));
     musicTrack.addEventListener("scroll", () => {
-      const i = Math.round(musicTrack.scrollLeft / musicCardWidth());
+      /* PCは複数枚が同時に見えるため、右端まで送ったら最後の曲番号を表示する */
+      const atEnd = musicTrack.scrollLeft >= musicTrack.scrollWidth - musicTrack.clientWidth - 2;
+      const i = atEnd ? musics.length - 1 : Math.round(musicTrack.scrollLeft / musicCardWidth());
       document.getElementById("music-cur").textContent = String(Math.min(i + 1, musics.length)).padStart(2, "0");
     }, { passive: true });
 
@@ -1845,7 +1848,8 @@
         }
       });
     }, { rootMargin: "-40% 0px -55% 0px" });
-    ["story", "character", "music", "novel", "script"].forEach((id) => spyObserver.observe(document.getElementById(id)));
+    /* gallery はナビに項目が無いので、表示中はどのリンクも光らない（前のセクションが光ったままにならない） */
+    ["story", "character", "music", "novel", "script", "gallery", "game"].forEach((id) => spyObserver.observe(document.getElementById(id)));
 
     /* ---------- Galleryライトボックス（実画像のみ対象。dummy_はプレースホルダー） ---------- */
     const lightbox = document.getElementById("lightbox");
