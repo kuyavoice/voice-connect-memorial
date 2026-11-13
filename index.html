@@ -687,19 +687,30 @@
         <h2 class="font-en text-4xl md:text-5xl font-semibold tracking-widest mb-8">
           <span class="text-accent">/</span> MUSIC
         </h2>
-        <p class="font-en text-xs tracking-[.3em] text-white/40 -mt-4 mb-8">CHARACTER SONGS — SWIPE OR DRAG</p>
-        <!-- 楽曲カルーセル（JSのmusics配列から描画） -->
-        <div id="music-track" class="carousel-track flex gap-4 md:gap-6 overflow-x-auto pb-4 -mx-4 px-4"></div>
-        <div class="flex items-center justify-center gap-8 mt-6">
-          <button id="music-prev" aria-label="前の曲へ"
-                  class="w-12 h-12 border border-white/30 font-en text-xl hover:bg-accent hover:text-night hover:border-accent transition-colors">&#x2039;</button>
-          <p class="font-en text-lg tracking-[.3em]">
-            <span id="music-cur" class="text-accent font-semibold">01</span>
-            <span class="text-white/40"> / </span>
-            <span id="music-total" class="text-white/60">03</span>
-          </p>
-          <button id="music-next" aria-label="次の曲へ"
-                  class="w-12 h-12 border border-white/30 font-en text-xl hover:bg-accent hover:text-night hover:border-accent transition-colors">&#x203A;</button>
+        <div class="flex flex-wrap items-center justify-between gap-3 -mt-4 mb-8">
+          <p id="music-sub" class="font-en text-xs tracking-[.3em] text-white/40">CHARACTER SONGS — SWIPE OR DRAG</p>
+          <!-- 表示切替: カルーセル ⇄ 全曲一覧 -->
+          <button id="music-view-toggle" aria-pressed="false"
+                  class="clip-tag font-jp text-xs tracking-widest pl-4 pr-5 py-1.5 border border-accent text-accent hover:bg-accent hover:text-night transition-colors">一覧で見る</button>
+        </div>
+        <div>
+          <!-- 楽曲カルーセル（JSのmusics配列から描画） -->
+          <div id="music-carousel">
+            <div id="music-track" class="carousel-track flex gap-4 md:gap-6 overflow-x-auto pb-4 -mx-4 px-4"></div>
+            <div class="flex items-center justify-center gap-8 mt-6">
+              <button id="music-prev" aria-label="前の曲へ"
+                      class="w-12 h-12 border border-white/30 font-en text-xl hover:bg-accent hover:text-night hover:border-accent transition-colors">&#x2039;</button>
+              <p class="font-en text-lg tracking-[.3em]">
+                <span id="music-cur" class="text-accent font-semibold">01</span>
+                <span class="text-white/40"> / </span>
+                <span id="music-total" class="text-white/60">03</span>
+              </p>
+              <button id="music-next" aria-label="次の曲へ"
+                      class="w-12 h-12 border border-white/30 font-en text-xl hover:bg-accent hover:text-night hover:border-accent transition-colors">&#x203A;</button>
+            </div>
+          </div>
+          <!-- 全曲一覧（タップでそのまま再生。JSのmusics配列から描画） -->
+          <div id="music-grid" class="hidden grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 md:gap-3"></div>
         </div>
       </div>
     </section>
@@ -1393,8 +1404,9 @@
                  data-video="${ytVideoId(s.url)}" data-title="${s.title}" data-url="${s.url}">♪ ${s.title} を聴く</button>`
       ).join("");
 
-      /* Xシェアリンク更新（このキャラを直接開けるディープリンク付き） */
-      const shareUrl = "https://kuyavoice.github.io/voice-connect-memorial/#character-" + c.id;
+      /* Xシェアリンク更新。c/NN.html はキャラ別のカード画像を持つ転送ページで、開くと #character-NN へ移動する
+         （生成は _tools/sharecards/build.mjs。名前・キャッチ・立ち絵を変えたら再生成すること） */
+      const shareUrl = "https://kuyavoice.github.io/voice-connect-memorial/c/" + c.id + ".html";
       const shareText = "『ボイスコネクトメモリアル』 " + c.name + "（CV. " + c.cv + "）\n「" + c.catchphrase + "」";
       el.share.href = "https://x.com/intent/post?text=" + encodeURIComponent(shareText) + "&url=" + encodeURIComponent(shareUrl);
 
@@ -1582,14 +1594,23 @@
     function ytThumbCheck(img) {
       if (img.src.includes("maxresdefault") && img.naturalWidth < 300) ytThumbFallback(img);
     }
-    function jacketHtml(m) {
+    /* small=true は一覧タイル用（小さく表示するので軽い中解像度サムネを使う） */
+    function jacketHtml(m, small) {
       if (m.jacket) return `<img src="${m.jacket}" alt="${m.title} ジャケット" class="jacket-img absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async" onerror="this.style.opacity=0">`;
       const vid = ytVideoId(m.url);
       if (!vid) return "";
-      const thumb = `https://i.ytimg.com/vi/${vid}/maxresdefault.jpg`;
+      const thumb = `https://i.ytimg.com/vi/${vid}/${small ? "mqdefault" : "maxresdefault"}.jpg`;
       /* 16:9のサムネを正方形に収めるため、ぼかしたサムネを背景に敷いて全体表示 */
       return `<img src="${thumb}" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover scale-125 blur-xl opacity-60" loading="lazy" decoding="async" onload="ytThumbCheck(this)" onerror="ytThumbFallback(this)">
           <img src="${thumb}" alt="${m.title} MVサムネイル" class="jacket-img absolute inset-0 w-full h-full object-contain" loading="lazy" decoding="async" onload="ytThumbCheck(this)" onerror="ytThumbFallback(this)">`;
+    }
+
+    /* 曲 → 歌っているキャラ（characterData の song / songs と動画IDで突き合わせ。該当なしは -1） */
+    function songOwnerIndex(m) {
+      const vid = ytVideoId(m.url);
+      if (!vid) return -1;
+      return characterData.findIndex((c) =>
+        (Array.isArray(c.songs) ? c.songs : (c.song ? [c.song] : [])).some((s) => ytVideoId(s.url) === vid));
     }
 
     const musicTrack = document.getElementById("music-track");
@@ -1604,6 +1625,7 @@
           <p class="font-en text-[10px] tracking-[.3em] text-accent mb-1">${m.type}</p>
           <p class="font-jp font-bold text-sm md:text-base leading-tight truncate">${m.title}</p>
           <p class="font-jp font-light text-[11px] text-white/50 truncate mt-1 mb-3">${m.artist}</p>
+          <div class="flex items-center justify-between gap-2">
           ${(() => {
             if (!m.url) return `<span class="inline-flex items-center gap-2 font-en text-xs tracking-widest border border-white/20 text-white/30 px-3 py-1.5">COMING SOON</span>`;
             const vid = ytVideoId(m.url);
@@ -1613,9 +1635,51 @@
               : `<a href="${m.url}" target="_blank" rel="noopener"
                     class="inline-flex items-center gap-2 font-en text-xs tracking-widest border border-accent text-accent px-3 py-1.5 hover:bg-accent hover:text-night transition-colors">▶ PLAY</a>`;
           })()}
+          ${songOwnerIndex(m) >= 0
+            ? `<button class="song-owner font-jp text-[11px] tracking-wider text-white/50 hover:text-accent transition-colors" data-char="${songOwnerIndex(m)}">キャラを見る →</button>`
+            : ""}
+          </div>
         </div>
       </div>
     `).join("");
+
+    /* 全曲一覧: 番号・曲名・キャラ名のタイル。タップでそのまま再生（.mv-play なので下の再生バインドに乗る） */
+    const musicGrid = document.getElementById("music-grid");
+    musicGrid.innerHTML = musics.filter((m) => ytVideoId(m.url)).map((m) => {
+      const owner = characterData[songOwnerIndex(m)];
+      return `
+      <button class="mv-play music-tile group relative aspect-square overflow-hidden bg-deepblue/50 border border-white/15 hover:border-accent transition-colors text-left"
+              data-video="${ytVideoId(m.url)}" data-title="${m.title}" data-url="${m.url}" aria-label="${m.id} ${m.title} を再生">
+        ${jacketHtml(m, true)}
+        <span class="clip-tag absolute top-0 left-0 bg-accent text-night font-en font-bold text-[10px] pl-2 pr-3 py-0.5 tracking-widest">${m.id}</span>
+        <span class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-night via-night/85 to-transparent pt-7 pb-1.5 px-1.5">
+          <span class="block font-jp font-bold text-[10px] md:text-[11px] leading-tight truncate group-hover:text-accent transition-colors">${m.title}</span>
+          ${owner ? `<span class="block font-jp font-light text-[9px] md:text-[10px] text-white/60 truncate mt-0.5">${owner.name}</span>` : ""}
+        </span>
+      </button>`;
+    }).join("");
+
+    /* 表示切替（カルーセル ⇄ 一覧） */
+    const musicToggle = document.getElementById("music-view-toggle");
+    musicToggle.addEventListener("click", () => {
+      const toGrid = musicGrid.classList.contains("hidden");
+      musicGrid.classList.toggle("hidden", !toGrid);
+      document.getElementById("music-carousel").classList.toggle("hidden", toGrid);
+      musicToggle.textContent = toGrid ? "カルーセルで見る" : "一覧で見る";
+      musicToggle.setAttribute("aria-pressed", String(toGrid));
+      document.getElementById("music-sub").textContent = toGrid ? "CHARACTER SONGS — TAP TO PLAY" : "CHARACTER SONGS — SWIPE OR DRAG";
+    });
+
+    /* 逆リンク: 曲カードからそのキャラのページへ（画面外での切替なのでフェードは挟まず直接描画） */
+    musicTrack.addEventListener("click", (e) => {
+      const btn = e.target.closest(".song-owner");
+      if (!btn || transitioning) return;
+      currentIndex = Number(btn.dataset.char);
+      expression = "normal";
+      renderCharacter();
+      try { history.replaceState(null, "", "#character-" + characterData[currentIndex].id); } catch (err) {}
+      document.getElementById("character").scrollIntoView({ behavior: "smooth" });
+    });
 
     document.getElementById("music-total").textContent = String(musics.length).padStart(2, "0");
 
