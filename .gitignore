@@ -7,8 +7,9 @@ Firefly*
 *_rgba.png
 1.png
 *.jpg
-# ただしOGP画像（配信用JPEG）は除外しない
+# ただしOGP画像（配信用JPEG）とキャラ別シェアカードは除外しない
 !ogp.jpg
+!c/*.jpg
 
 # キャラ立ち絵の元PNG（配信はWebPに変換済み。PNGはローカル保管の元データ）
 *_normal.png
