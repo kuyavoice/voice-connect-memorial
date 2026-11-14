@@ -63,27 +63,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
 
-  <!-- Tailwind CSS (CDN) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            night:    '#060913',   // ほぼ黒の紺
-            midnight: '#0B1026',   // ミッドナイトブルー
-            deepblue: '#111A3A',
-            accent:   '#87CEEB',   // スカイブルー
-          },
-          fontFamily: {
-            en: ['Oswald', 'sans-serif'],
-            jp: ['"Noto Sans JP"', 'sans-serif'],
-          },
-        },
-      },
-    };
-  </script>
-
   <style>
     /* ============ base ============ */
     html { scroll-behavior: smooth; }
@@ -411,6 +390,12 @@
     .clip-slant-t { clip-path: polygon(0 3rem, 100% 0, 100% 100%, 0 100%); }
     .clip-tag     { clip-path: polygon(0 0, 100% 0, calc(100% - .9rem) 100%, 0 100%); }
   </style>
+
+  <!-- Tailwind CSS（ビルド済みの tailwind.css。2026-11-14 に CDN から切り替え）。
+       色・フォントの設定は _tools/tailwind/tailwind.config.js。
+       index.html のクラスを足した・変えたら「bash _tools/tailwind/build.sh」で作り直すこと（?v= も自動で更新される）。
+       上の <style> より後に読むのは、CDN のときと同じ優先順位にするため -->
+  <link rel="stylesheet" href="tailwind.css?v=c2b3127d">
 </head>
 
 <body class="font-jp text-white antialiased overflow-x-hidden">
